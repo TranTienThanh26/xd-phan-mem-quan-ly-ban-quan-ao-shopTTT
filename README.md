@@ -7,8 +7,8 @@
 ### 1. Giới thiệu tổng quan
 - **Tên phần mềm:** TTT STORE - Quản Lý Bán Quần Áo & Cửa Hàng Thời Trang Trực Tuyến
 - **Hai tác nhân chính của hệ thống:**
-  1. 👑 **Quản Trị Viên (Admin / Chủ Cửa Hàng):** Quản lý toàn bộ danh mục, quần áo, khách hàng, hóa đơn, báo cáo doanh thu và bán hàng trực tiếp tại quầy (POS).
-  2. 🛍️ **Khách Hàng (Customer):** Xem catalog thời trang, lọc size/màu/giá, giỏ hàng, đặt hàng trực tuyến với trừ kho tự động, tra cứu lịch sử đơn hàng, thẻ thành viên tích điểm và bảo mật SHA-256.
+  1.  **Quản Trị Viên (Admin / Chủ Cửa Hàng):** Quản lý toàn bộ danh mục, quần áo, khách hàng, hóa đơn, báo cáo doanh thu và bán hàng trực tiếp tại quầy (POS).
+  2.  **Khách Hàng (Customer):** Xem catalog thời trang, lọc size/màu/giá, giỏ hàng, đặt hàng trực tuyến với trừ kho tự động, tra cứu lịch sử đơn hàng, thẻ thành viên tích điểm và bảo mật SHA-256.
 - **Nền tảng:** C# .NET Framework 4.7.2, Windows Presentation Foundation (WPF XAML)
 - **Cơ sở dữ liệu:** MySQL Server 8.x / 9.x (`QLBanQuanAoDB`) kết nối trực tiếp qua **ADO.NET thuần** (`MySqlConnector`: `MySqlConnection`, `MySqlCommand`, `MySqlTransaction`, `MySqlDataAdapter`).
 - **Bảo mật & Mã hóa:** Mã hóa một chiều mật khẩu bằng thuật toán **SHA-256** an toàn tuyệt đối; che số điện thoại bảo mật thông tin cá nhân.
@@ -98,7 +98,7 @@ CongNghenetBTL/
      * Tên sản phẩm, tag danh mục, kích cỡ và màu sắc có sẵn.
      * Giá niêm yết định dạng tiền tệ Việt Nam (`350.000 đ`).
      * Trạng thái tồn kho thực tế từ CSDL MySQL (xanh: còn hàng, cam: sắp hết, đỏ: hết hàng).
-     * Nút "👁️ Chi tiết" và nút "🛒 Thêm Giỏ" với hiệu ứng thông báo toast nhanh.
+     * Nút "👁️ Chi tiết" và nút "🛒 Thêm Giỏ" với hiệu ứng thông báo nhanh.
 
 2. **Modal Xem Nhanh Chi Tiết Sản Phẩm (Quick View):**
    - Phóng to ảnh sản phẩm, xem đầy đủ chất liệu vải, kích cỡ, màu sắc, mô tả chi tiết, số lượng tồn kho.
@@ -109,9 +109,9 @@ CongNghenetBTL/
    - Badge hiển thị số lượng món trên Header tự động cập nhật thời gian thực.
    - **Khung Điền Thông Tin Giao Hàng:** Họ tên người nhận, Số điện thoại, Địa chỉ nhận hàng chi tiết, Ghi chú giao hàng. (Tự động điền sẵn nếu khách đã đăng nhập).
    - **Phương Thức Thanh Toán Linh Hoạt:**
-     * 💵 Tiền mặt khi nhận hàng (COD).
-     * 💳 Chuyển khoản ngân hàng (Hiển thị ngay STK MB Bank / Techcombank và hướng dẫn).
-     * 🏦 Thẻ ATM nội địa / Quét mã QR.
+     *  Tiền mặt khi nhận hàng (COD).
+     *  Chuyển khoản ngân hàng (Hiển thị ngay STK MB Bank / Techcombank và hướng dẫn).
+     *  Thẻ ATM nội địa / Quét mã QR.
    - **Tự Động Tính Tiền & Giảm Giá Thành Viên:**
      * Tạm tính tiền hàng.
      * Giảm giá thành viên: **Hạng VIP tự động giảm 10%**, **Thân thiết giảm 5%**.
@@ -128,7 +128,7 @@ CongNghenetBTL/
    - Chọn một đơn hàng để xem ngay danh sách các món quần áo trong đơn (Tên, Size, Màu, Số lượng, Đơn giá, Thành tiền).
 
 5. **Tài Khoản & Bảo Mật (Profile & Security):**
-   - **Thẻ Thành Viên Điện Tử (Loyalty Card):** Thiết kế gradient thời trang hiển thị họ tên, huy hiệu hạng (`⭐ HẠNG VIP (-10%)` / `🎖️ THÂN THIẾT (-5%)`), số điểm tích lũy và số điện thoại đã được **che bảo mật** (ví dụ `090****567`).
+   - **Thẻ Thành Viên Điện Tử (Loyalty Card):** Thiết kế gradient thời trang hiển thị họ tên, huy hiệu hạng (` HẠNG VIP (-10%)` / ` THÂN THIẾT (-5%)`), số điểm tích lũy và số điện thoại đã được **che bảo mật** (ví dụ `090****567`).
    - Cập nhật thông tin nhận hàng (Họ tên, Email, Địa chỉ mặc định).
    - **Đổi Mật Khẩu Bảo Mật:** Nhập mật khẩu cũ, mật khẩu mới và xác nhận; mật khẩu mới được băm bằng chuẩn **SHA-256** an toàn trước khi lưu vào CSDL MySQL.
 
@@ -179,6 +179,6 @@ Hệ thống hoạt động trên cùng một CSDL MySQL `QLBanQuanAoDB`:
 2. **Mở dự án:** Mở file `CongNghenetBTL.sln` trong Visual Studio.
 3. **Chạy ứng dụng (F5):**
    - Màn hình Đăng Nhập mở ra.
-   - Bấm nút **"🛍️ VÀO CỬA HÀNG MUA SẮM (KHÁCH HÀNG)"** để trải nghiệm giao diện khách hàng.
-   - Hoặc bấm **"👑 ĐĂNG NHẬP QUẢN TRỊ VIÊN (ADMIN)"** để vào Trang chủ Admin.
+   - Bấm nút **" VÀO CỬA HÀNG MUA SẮM (KHÁCH HÀNG)"** để trải nghiệm giao diện khách hàng.
+   - Hoặc bấm **" ĐĂNG NHẬP QUẢN TRỊ VIÊN (ADMIN)"** để vào Trang chủ Admin.
    - Ở cả 2 giao diện đều có nút chuyển qua lại mượt mà để kiểm tra liên kết dữ liệu!
