@@ -1,0 +1,460 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- BẢNG MÀU CHÍNH CHO PHẦN MỀM SHOP QUẦN ÁO -->
+    <Color x:Key="MauChinhColor">#4F46E5</Color>
+    <Color x:Key="MauChinhDamColor">#4338CA</Color>
+    <Color x:Key="MauChinhNhatColor">#EEF2FF</Color>
+    
+    <Color x:Key="MauThoiTrangColor">#E11D48</Color> <!-- Hồng ruby thời trang -->
+    <Color x:Key="MauThanhCongColor">#10B981</Color>
+    <Color x:Key="MauCanhBaoColor">#F59E0B</Color>
+    <Color x:Key="MauNguyHiemColor">#EF4444</Color>
+
+    <Color x:Key="MauNenChinhColor">#F8FAFC</Color>
+    <Color x:Key="MauNenTheColor">#FFFFFF</Color>
+    <Color x:Key="MauVienNheColor">#E2E8F0</Color>
+    
+    <Color x:Key="MauChuChinhColor">#0F172A</Color>
+    <Color x:Key="MauChuPhuColor">#64748B</Color>
+    <Color x:Key="MauChuMoColor">#94A3B8</Color>
+
+    <SolidColorBrush x:Key="MauChinhBrush" Color="{StaticResource MauChinhColor}" />
+    <SolidColorBrush x:Key="MauChinhDamBrush" Color="{StaticResource MauChinhDamColor}" />
+    <SolidColorBrush x:Key="MauChinhNhatBrush" Color="{StaticResource MauChinhNhatColor}" />
+    
+    <SolidColorBrush x:Key="MauThoiTrangBrush" Color="{StaticResource MauThoiTrangColor}" />
+    <SolidColorBrush x:Key="MauThanhCongBrush" Color="{StaticResource MauThanhCongColor}" />
+    <SolidColorBrush x:Key="MauCanhBaoBrush" Color="{StaticResource MauCanhBaoColor}" />
+    <SolidColorBrush x:Key="MauNguyHiemBrush" Color="{StaticResource MauNguyHiemColor}" />
+
+    <SolidColorBrush x:Key="MauNenChinhBrush" Color="{StaticResource MauNenChinhColor}" />
+    <SolidColorBrush x:Key="MauNenTheBrush" Color="{StaticResource MauNenTheColor}" />
+    <SolidColorBrush x:Key="MauVienNheBrush" Color="{StaticResource MauVienNheColor}" />
+
+    <SolidColorBrush x:Key="MauChuChinhBrush" Color="{StaticResource MauChuChinhColor}" />
+    <SolidColorBrush x:Key="MauChuPhuBrush" Color="{StaticResource MauChuPhuColor}" />
+    <SolidColorBrush x:Key="MauChuMoBrush" Color="{StaticResource MauChuMoColor}" />
+
+    <!-- HIỆU ỨNG ĐỔ BÓNG THỜI TRANG HIỆN ĐẠI -->
+    <DropShadowEffect x:Key="BongTheCard" BlurRadius="16" Direction="270" ShadowDepth="4" Opacity="0.06" Color="#000000" />
+    <DropShadowEffect x:Key="BongNoiBat" BlurRadius="24" Direction="270" ShadowDepth="8" Opacity="0.12" Color="#000000" />
+    <DropShadowEffect x:Key="BongNutBam" BlurRadius="12" Direction="270" ShadowDepth="2" Opacity="0.25" Color="#4F46E5" />
+
+    <!-- PHÔNG CHỮ -->
+    <FontFamily x:Key="PhongChuChinh">Segoe UI, Roboto, Helvetica Neue, Arial</FontFamily>
+
+    <!-- NÚT BẤM CHÍNH (PRIMARY BUTTON) -->
+    <Style x:Key="NutChinh" TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="{StaticResource MauChinhBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="Padding" Value="18,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" Background="{TemplateBinding Background}"
+                            CornerRadius="8"
+                            Effect="{StaticResource BongNutBam}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource MauChinhDamBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#3730A3" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NÚT BẤM VIỀN NGOÀI (OUTLINE BUTTON) -->
+    <Style x:Key="NutVien" TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="{StaticResource MauChuChinhBrush}" />
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderBrush" Value="{StaticResource MauVienNheBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Height" Value="38" />
+        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" 
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{StaticResource MauChinhNhatBrush}" />
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource MauChinhBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource MauChinhBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NÚT BẤM THÀNH CÔNG (SUCCESS BUTTON - XANH LÁ) -->
+    <Style x:Key="NutThanhCong" TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="{StaticResource MauThanhCongBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="Padding" Value="18,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#059669" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#047857" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NÚT BẤM NGUY HIỂM / XÓA (DANGER BUTTON - ĐỎ) -->
+    <Style x:Key="NutNguyHiem" TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="{StaticResource MauNguyHiemBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#DC2626" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NÚT BẤM CẢNH BÁO (WARNING BUTTON - VÀNG CAM) -->
+    <Style x:Key="NutCanhBao" TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Background" Value="{StaticResource MauCanhBaoBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="#D97706" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NÚT CHỮ (TEXT BUTTON) -->
+    <Style x:Key="NutChu" TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource MauChinhBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="Transparent">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource MauChinhDamBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NÚT PHỤ (SECONDARY BUTTON) -->
+    <Style x:Key="NutPhu" TargetType="Button">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource MauChuChinhBrush}" />
+        <Setter Property="Background" Value="#F1F5F9" />
+        <Setter Property="BorderBrush" Value="{StaticResource MauVienNheBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Height" Value="38" />
+        <Setter Property="Padding" Value="14,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="borderNut" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="borderNut" Property="Background" Value="#E2E8F0" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="borderNut" Property="Background" Value="#CBD5E1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NÚT BIỂU TƯỢNG (ICON BUTTON) -->
+    <Style x:Key="NutBieuTuong" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{StaticResource MauChuPhuBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="bdr" Background="{TemplateBinding Background}" CornerRadius="6">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bdr" Property="Background" Value="#F1F5F9" />
+                            <Setter Property="Foreground" Value="{StaticResource MauChuChinhBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Ô NHẬP VĂN BẢN (TEXTBOX) -->
+    <Style x:Key="OVanBan" TargetType="TextBox">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="Foreground" Value="{StaticResource MauChuChinhBrush}" />
+        <Setter Property="Background" Value="#FFFFFF" />
+        <Setter Property="BorderBrush" Value="{StaticResource MauVienNheBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border x:Name="border" 
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="8">
+                        <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="#CBD5E1" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource MauChinhBrush}" />
+                            <Setter TargetName="border" Property="BorderThickness" Value="1.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Ô NHẬP MẬT KHẨU (PASSWORDBOX) -->
+    <Style x:Key="OMatKhau" TargetType="PasswordBox">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="Foreground" Value="{StaticResource MauChuChinhBrush}" />
+        <Setter Property="Background" Value="#FFFFFF" />
+        <Setter Property="BorderBrush" Value="{StaticResource MauVienNheBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <Border x:Name="border" 
+                            Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="8">
+                        <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="#CBD5E1" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource MauChinhBrush}" />
+                            <Setter TargetName="border" Property="BorderThickness" Value="1.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- COMBOBOX LỰA CHỌN -->
+    <Style x:Key="OHopChon" TargetType="ComboBox">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="13.5" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="Foreground" Value="{StaticResource MauChuChinhBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource MauVienNheBrush}" />
+        <Setter Property="Padding" Value="10,0" />
+    </Style>
+
+    <!-- BÍ DANH TÊN GỌI TIỆN LỢI CHO FORM -->
+    <Style x:Key="OVanBanChuan" BasedOn="{StaticResource OVanBan}" TargetType="TextBox" />
+    <Style x:Key="OMatKhauChuan" BasedOn="{StaticResource OMatKhau}" TargetType="PasswordBox" />
+    <Style x:Key="OChonChuan" BasedOn="{StaticResource OHopChon}" TargetType="ComboBox" />
+
+    <!-- NÚT ĐIỀU KHIỂN CỬA SỔ -->
+    <Style x:Key="NutDongCuaSo" TargetType="Button">
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{StaticResource MauChuPhuBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="b" Background="{TemplateBinding Background}" CornerRadius="4">
+                        <TextBlock Text="✕" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="b" Property="Background" Value="#FEE2E2" />
+                            <Setter Property="Foreground" Value="{StaticResource MauNguyHiemBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NutThuNhoCuaSo" TargetType="Button">
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{StaticResource MauChuPhuBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="b" Background="{TemplateBinding Background}" CornerRadius="4">
+                        <TextBlock Text="─" FontSize="13" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="b" Property="Background" Value="#E2E8F0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NÚT MENU THANH ĐIỀU HƯỚNG BÊN TRÁI -->
+    <Style x:Key="NutMenuBenTrai" TargetType="RadioButton">
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="#475569" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Height" Value="46" />
+        <Setter Property="Margin" Value="10,3" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Border x:Name="btnBorder" Background="{TemplateBinding Background}" CornerRadius="8" Padding="14,0">
+                        <ContentPresenter VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="btnBorder" Property="Background" Value="#F1F5F9" />
+                            <Setter Property="Foreground" Value="{StaticResource MauChinhBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="btnBorder" Property="Background" Value="{StaticResource MauChinhNhatBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource MauChinhBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- BẢNG DỮ LIỆU DATAGRID -->
+    <Style x:Key="BangDuLieu" TargetType="DataGrid">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderBrush" Value="{StaticResource MauVienNheBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="RowHeight" Value="42" />
+        <Setter Property="GridLinesVisibility" Value="Horizontal" />
+        <Setter Property="HorizontalGridLinesBrush" Value="#F1F5F9" />
+        <Setter Property="VerticalGridLinesBrush" Value="Transparent" />
+        <Setter Property="AutoGenerateColumns" Value="False" />
+        <Setter Property="CanUserAddRows" Value="False" />
+        <Setter Property="CanUserResizeRows" Value="False" />
+        <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="FontFamily" Value="{StaticResource PhongChuChinh}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="RowBackground" Value="White" />
+        <Setter Property="AlternatingRowBackground" Value="#F8FAFC" />
+        <Setter Property="ColumnHeaderHeight" Value="40" />
+    </Style>
+
+</ResourceDictionary>

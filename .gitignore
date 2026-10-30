@@ -1,0 +1,23 @@
+## Visual Studio & .NET .gitignore
+.vs/
+.vscode/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.log
+app_debug.log
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rchive/
+
+# NuGet Packages
+*.nupkg
+packages/
