@@ -586,6 +586,7 @@
                                 <TextBox x:Name="txtProfileDiaChi" Style="{StaticResource OVanBanChuan}" Height="60" TextWrapping="Wrap" Margin="0,0,0,16" />
 
                                 <Button Content="💾 Lưu Cập Nhật Thông Tin" Style="{StaticResource NutChinh}" Height="40" Click="BtnLuuProfile_Click" />
+                                <Button Content="🚪 Đăng Xuất Khỏi Tài Khoản" Style="{StaticResource NutVien}" Height="40" Margin="0,10,0,0" Foreground="{StaticResource MauNguyHiemBrush}" BorderBrush="{StaticResource MauNguyHiemBrush}" Click="BtnDangXuatKhach_Click" />
                             </StackPanel>
                         </ScrollViewer>
                     </Border>
@@ -762,6 +763,7 @@
                                 <StackPanel>
                                     <TextBlock Text="⚡ Nút thử nghiệm nhanh tài khoản khách VIP:" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,0,0,6" />
                                     <Button Content="Điền Khách VIP mẫu (Trần Minh Hoàng - 0901234567)" Style="{StaticResource NutVien}" Height="30" FontSize="11" Click="BtnDienKhachVIPMau_Click" />
+                                    <Button Content="🔙 Mở Màn Hình Đăng Nhập &amp; Đăng Ký Hệ Thống" Style="{StaticResource NutChu}" Height="30" FontSize="11.5" Margin="0,6,0,0" Click="BtnMoDangNhapChinh_Click" />
                                 </StackPanel>
                             </Border>
                         </StackPanel>

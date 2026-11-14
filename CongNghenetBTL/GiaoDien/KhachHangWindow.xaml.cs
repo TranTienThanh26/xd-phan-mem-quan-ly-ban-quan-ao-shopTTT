@@ -1141,7 +1141,18 @@ namespace CongNghenetBTL.GiaoDien
 
         private void BtnMoDangNhapKhach_Click(object sender, RoutedEventArgs e)
         {
-            HienModalDangNhapKhach(true);
+            var dangNhap = new DangNhapWindow();
+            Application.Current.MainWindow = dangNhap;
+            dangNhap.Show();
+            this.Close();
+        }
+
+        private void BtnMoDangNhapChinh_Click(object sender, RoutedEventArgs e)
+        {
+            var dangNhap = new DangNhapWindow();
+            Application.Current.MainWindow = dangNhap;
+            dangNhap.Show();
+            this.Close();
         }
 
         private void HienModalDangNhapKhach(bool laDangNhap)
@@ -1272,9 +1283,12 @@ namespace CongNghenetBTL.GiaoDien
         private void BtnDangXuatKhach_Click(object sender, RoutedEventArgs e)
         {
             PhienDangNhap.DangXuatKhachHang();
-            KiemTraTrangThaiDangNhapKhach();
-            CapNhatTongTienGioHang();
-            HienThongBao("Đã đăng xuất tài khoản khách hàng!", "Đăng Xuất", MessageBoxButton.OK, MessageBoxImage.Information);
+            PhienDangNhap.DangXuat();
+
+            var dangNhap = new DangNhapWindow();
+            Application.Current.MainWindow = dangNhap;
+            dangNhap.Show();
+            this.Close();
         }
 
         #endregion

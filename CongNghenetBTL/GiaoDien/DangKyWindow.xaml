@@ -10,6 +10,7 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
+        Topmost="True"
         MouseLeftButtonDown="CuaSo_MouseLeftButtonDown">
 
     <Border CornerRadius="16" Background="White" Effect="{StaticResource BongNoiBat}" Margin="15">
