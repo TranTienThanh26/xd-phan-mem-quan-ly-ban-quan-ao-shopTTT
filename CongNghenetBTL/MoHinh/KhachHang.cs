@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace CongNghenetBTL.MoHinh
 {
@@ -30,7 +30,20 @@ namespace CongNghenetBTL.MoHinh
             {
                 if (string.Equals(LoaiKhach, "VIP", StringComparison.OrdinalIgnoreCase)) return "⭐ Hạng VIP (-10%)";
                 if (string.Equals(LoaiKhach, "Thân thiết", StringComparison.OrdinalIgnoreCase)) return "🎖️ Thân Thiết (-5%)";
-                return "👤 Khách Hàng";
+                return "👤 Khách Thường (0%)";
+            }
+        }
+
+        public string HienThiCombo
+        {
+            get
+            {
+                if (MaKH == 0) return "Khách vãng lai";
+                string sdt = !string.IsNullOrEmpty(SoDienThoai) ? $" ({SoDienThoai})" : "";
+                string hang = !string.IsNullOrEmpty(LoaiKhach) && !string.Equals(LoaiKhach, "Thường", StringComparison.OrdinalIgnoreCase) 
+                    ? $" - {HienThiHang}" 
+                    : "";
+                return $"{HoTen}{sdt}{hang}";
             }
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -28,6 +28,7 @@ namespace CongNghenetBTL.GiaoDien
         private List<DanhMuc> _danhSachDanhMuc = new List<DanhMuc>();
 
         private SanPham _spDangXemChiTiet = null;
+        private string _sizeDangChon = string.Empty;
 
         private int _maDanhMucDangChon = 0;
 
@@ -54,7 +55,7 @@ namespace CongNghenetBTL.GiaoDien
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi tải dữ liệu cửa hàng: " + ex.Message, "Thông Báo Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                HienThongBao("Lỗi khi tải dữ liệu cửa hàng: " + ex.Message, "Thông Báo Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -107,11 +108,8 @@ namespace CongNghenetBTL.GiaoDien
             else if (tabNavDonHang.IsChecked == true)
             {
                 pnlTabDonHang.Visibility = Visibility.Visible;
-                if (PhienDangNhap.KhachDaDangNhap)
-                {
-                    txtTraCuuSDT.Text = PhienDangNhap.KhachHangHienTai.SoDienThoai;
-                    TaiLichSuDonHang(PhienDangNhap.KhachHangHienTai.MaKH);
-                }
+                int maKH = PhienDangNhap.KhachDaDangNhap ? PhienDangNhap.KhachHangHienTai.MaKH : 0;
+                TaiLichSuDonHang(maKH);
             }
             else if (tabNavTaiKhoan.IsChecked == true)
             {
@@ -293,7 +291,26 @@ namespace CongNghenetBTL.GiaoDien
                 BorderThickness = new Thickness(1),
                 Margin = new Thickness(7),
                 Padding = new Thickness(12),
-                Effect = (System.Windows.Media.Effects.Effect)FindResource("BongTheCard")
+                Effect = (System.Windows.Media.Effects.Effect)FindResource("BongTheCard"),
+                Cursor = Cursors.Hand
+            };
+
+            // Hieu ung hover vien doi mau noi bat
+            card.MouseEnter += (s, e) => { card.BorderBrush = (Brush)FindResource("MauChinhBrush"); };
+            card.MouseLeave += (s, e) => { card.BorderBrush = (Brush)FindResource("MauVienNheBrush"); };
+
+            // Bam vao bat ky dau tren the ao de hien chi tiet
+            card.MouseLeftButtonUp += (s, e) =>
+            {
+                if (e.OriginalSource is DependencyObject dep)
+                {
+                    while (dep != null && dep != card)
+                    {
+                        if (dep is Button) return;
+                        dep = VisualTreeHelper.GetParent(dep);
+                    }
+                }
+                HienModalChiTiet(sp);
             };
 
             var grid = new Grid();
@@ -433,7 +450,7 @@ namespace CongNghenetBTL.GiaoDien
                 Margin = new Thickness(4, 0, 0, 0),
                 Tag = sp
             };
-            btnMua.Click += (s, ev) => ThemVaoGioHang(sp, 1);
+            btnMua.Click += (s, ev) => HienModalChiTiet(sp);
             Grid.SetColumn(btnMua, 1);
             pnlNut.Children.Add(btnMua);
 
@@ -444,7 +461,7 @@ namespace CongNghenetBTL.GiaoDien
 
         #endregion
 
-        #region 2. MODAL CHI TIẾT SẢN PHẨM (QUICK VIEW)
+                #region 2. MODAL CHI TIẾT SẢN PHẨM & CHỌN SIZE, SỐ LƯỢNG
 
         private void HienModalChiTiet(SanPham sp)
         {
@@ -454,11 +471,17 @@ namespace CongNghenetBTL.GiaoDien
             txtModalTenSP.Text = sp.TenSP;
             txtModalDanhMuc.Text = sp.TenDanhMuc ?? "Thời Trang";
             txtModalGiaBan.Text = sp.GiaBanDinhDang;
-            txtModalSizeMau.Text = $"Kích cỡ: {sp.KichCo} | Màu sắc: {sp.MauSac}";
+            txtModalSizeMau.Text = $"Màu sắc: {sp.MauSac}";
             txtModalChatLieu.Text = $"Chất liệu vải: {sp.ChatLieu}";
-            txtModalTonKho.Text = $"Số lượng có sẵn trong kho: {sp.SoLuongTon} cái";
+            txtModalTonKho.Text = sp.SoLuongTon > 0 ? $"Số lượng có sẵn trong kho: {sp.SoLuongTon} cái" : "Tạm hết hàng trong kho";
+            txtModalGhiChuTonKho.Text = sp.SoLuongTon > 0 ? $"(Còn {sp.SoLuongTon} cái)" : "(Hết hàng)";
             txtModalMoTa.Text = !string.IsNullOrEmpty(sp.MoTa) ? sp.MoTa : "Sản phẩm thời trang cao cấp, đường may tỉ mỉ, tôn dáng và bền đẹp.";
             txtModalSoLuongMua.Text = "1";
+
+            NapDanhSachSizeModal(sp);
+
+            btnModalThemVaoGio.IsEnabled = sp.SoLuongTon > 0;
+            btnModalThemVaoGio.Content = sp.SoLuongTon > 0 ? "🛒 Thêm Vào Giỏ Hàng" : "❌ Tạm Hết Hàng";
 
             try
             {
@@ -478,6 +501,97 @@ namespace CongNghenetBTL.GiaoDien
             }
 
             modalChiTietSP.Visibility = Visibility.Visible;
+        }
+
+        private void NapDanhSachSizeModal(SanPham sp)
+        {
+            if (pnlModalChonSize == null) return;
+            pnlModalChonSize.Children.Clear();
+
+            var dsSize = LayDanhSachSizeChoSanPham(sp);
+            _sizeDangChon = !string.IsNullOrEmpty(sp.KichCo) && dsSize.Contains(sp.KichCo) ? sp.KichCo : dsSize.FirstOrDefault() ?? "Freesize";
+            if (txtModalSizeHienTai != null) txtModalSizeHienTai.Text = _sizeDangChon;
+
+            foreach (var sz in dsSize)
+            {
+                var btnSize = new Button
+                {
+                    Content = sz,
+                    Tag = sz,
+                    Height = 32,
+                    MinWidth = 46,
+                    Margin = new Thickness(0, 0, 8, 6),
+                    FontSize = 12,
+                    Cursor = Cursors.Hand
+                };
+
+                CapNhatGiaoDienNutSize(btnSize, sz == _sizeDangChon);
+
+                btnSize.Click += (s, e) =>
+                {
+                    _sizeDangChon = sz;
+                    if (txtModalSizeHienTai != null) txtModalSizeHienTai.Text = _sizeDangChon;
+                    foreach (var child in pnlModalChonSize.Children)
+                    {
+                        if (child is Button b && b.Tag is string tagSz)
+                        {
+                            CapNhatGiaoDienNutSize(b, tagSz == _sizeDangChon);
+                        }
+                    }
+                };
+
+                pnlModalChonSize.Children.Add(btnSize);
+            }
+        }
+
+        private void CapNhatGiaoDienNutSize(Button btn, bool isSelected)
+        {
+            if (isSelected)
+            {
+                btn.Background = (Brush)FindResource("MauChinhBrush");
+                btn.Foreground = Brushes.White;
+                btn.BorderBrush = (Brush)FindResource("MauChinhBrush");
+                btn.FontWeight = FontWeights.Bold;
+            }
+            else
+            {
+                btn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F1F5F9"));
+                btn.Foreground = (Brush)FindResource("MauChuChinhBrush");
+                btn.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CBD5E1"));
+                btn.FontWeight = FontWeights.SemiBold;
+            }
+        }
+
+        private List<string> LayDanhSachSizeChoSanPham(SanPham sp)
+        {
+            var result = new List<string>();
+            string dm = sp.TenDanhMuc?.ToLower() ?? string.Empty;
+            string ten = sp.TenSP?.ToLower() ?? string.Empty;
+            string kc = sp.KichCo?.Trim() ?? string.Empty;
+
+            if (kc.Equals("Freesize", StringComparison.OrdinalIgnoreCase))
+            {
+                result.Add("Freesize");
+            }
+            else if (kc.Contains("cm") || dm.Contains("phụ kiện") || ten.Contains("thắt lưng") || ten.Contains("túi"))
+            {
+                result.Add(!string.IsNullOrEmpty(kc) ? kc : "Tiêu chuẩn");
+            }
+            else if (dm.Contains("quần") || ten.Contains("quần") || int.TryParse(kc, out _))
+            {
+                result.AddRange(new[] { "28", "29", "30", "31", "32", "33", "34" });
+            }
+            else
+            {
+                result.AddRange(new[] { "S", "M", "L", "XL", "XXL" });
+            }
+
+            if (!string.IsNullOrEmpty(kc) && !result.Contains(kc))
+            {
+                result.Add(kc);
+            }
+
+            return result;
         }
 
         private void BtnDongModalSP_Click(object sender, RoutedEventArgs e)
@@ -512,7 +626,7 @@ namespace CongNghenetBTL.GiaoDien
                 }
                 else
                 {
-                    MessageBox.Show($"Kho chỉ còn {_spDangXemChiTiet.SoLuongTon} sản phẩm!", "Thông Báo Kho", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    HienThongBao($"Kho chỉ còn {_spDangXemChiTiet.SoLuongTon} sản phẩm!", "Thông Báo Kho", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
@@ -522,7 +636,8 @@ namespace CongNghenetBTL.GiaoDien
             if (_spDangXemChiTiet == null) return;
             if (int.TryParse(txtModalSoLuongMua.Text, out int sl) && sl > 0)
             {
-                ThemVaoGioHang(_spDangXemChiTiet, sl);
+                string sizeChon = !string.IsNullOrEmpty(_sizeDangChon) ? _sizeDangChon : _spDangXemChiTiet.KichCo;
+                ThemVaoGioHang(_spDangXemChiTiet, sl, sizeChon);
                 modalChiTietSP.Visibility = Visibility.Collapsed;
             }
         }
@@ -531,40 +646,42 @@ namespace CongNghenetBTL.GiaoDien
 
         #region 3. TAB GIỎ HÀNG & THANH TOÁN (CART & CHECKOUT)
 
-        private void ThemVaoGioHang(SanPham sp, int soLuong)
+        private void ThemVaoGioHang(SanPham sp, int soLuong, string kichCoChon = null)
         {
             if (sp == null) return;
 
+            if (string.IsNullOrWhiteSpace(kichCoChon))
+            {
+                kichCoChon = !string.IsNullOrWhiteSpace(sp.KichCo) ? sp.KichCo : "Tiêu chuẩn";
+            }
+
             if (sp.SoLuongTon <= 0)
             {
-                MessageBox.Show($"Mẫu '{sp.TenSP}' tạm thời đã hết hàng trong kho!", "Hết Hàng", MessageBoxButton.OK, MessageBoxImage.Warning);
+                HienThongBao($"Mẫu '{sp.TenSP}' tạm thời đã hết hàng trong kho!", "Hết Hàng", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var item = _gioHang.FirstOrDefault(x => x.MaSP == sp.MaSP);
+            int tongSoLuongSpTrongGio = _gioHang.Where(x => x.MaSP == sp.MaSP).Sum(x => x.SoLuong);
+            if (tongSoLuongSpTrongGio + soLuong > sp.SoLuongTon)
+            {
+                HienThongBao($"Bạn đã có {tongSoLuongSpTrongGio} sản phẩm này trong giỏ. Số lượng kho chỉ còn {sp.SoLuongTon} cái!", "Cảnh Báo Tồn Kho", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var item = _gioHang.FirstOrDefault(x => x.MaSP == sp.MaSP && x.KichCo == kichCoChon);
             if (item != null)
             {
-                if (item.SoLuong + soLuong > sp.SoLuongTon)
-                {
-                    MessageBox.Show($"Bạn đã có {item.SoLuong} sản phẩm trong giỏ. Số lượng kho chỉ còn {sp.SoLuongTon} cái!", "Cảnh Báo Tồn Kho", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
                 item.SoLuong += soLuong;
                 item.ThanhTien = item.SoLuong * item.DonGia;
+                dgvGioHangKhach.Items.Refresh();
             }
             else
             {
-                if (soLuong > sp.SoLuongTon)
-                {
-                    MessageBox.Show($"Số lượng vượt quá tồn kho hiện có ({sp.SoLuongTon} cái)!", "Cảnh Báo Tồn Kho", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
                 _gioHang.Add(new ChiTietHoaDon
                 {
                     MaSP = sp.MaSP,
                     TenSP = sp.TenSP,
-                    KichCo = sp.KichCo,
+                    KichCo = kichCoChon,
                     MauSac = sp.MauSac,
                     DonGia = sp.GiaBan,
                     SoLuong = soLuong,
@@ -576,7 +693,7 @@ namespace CongNghenetBTL.GiaoDien
             CapNhatBadgeGioHang();
             CapNhatTongTienGioHang();
 
-            MessageBox.Show($"Đã thêm '{sp.TenSP}' vào giỏ hàng thành công!", "Giỏ Hàng TTT Store", MessageBoxButton.OK, MessageBoxImage.Information);
+            HienThongBao($"Đã thêm {soLuong} x '{sp.TenSP}' (Size: {kichCoChon}) vào giỏ hàng thành công!", "Giỏ Hàng TTT Store", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void CapNhatBadgeGioHang()
@@ -631,7 +748,7 @@ namespace CongNghenetBTL.GiaoDien
                     }
                     else
                     {
-                        MessageBox.Show($"Kho chỉ còn {sp.SoLuongTon} sản phẩm!", "Tồn Kho Tối Đa", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        HienThongBao($"Kho chỉ còn {sp.SoLuongTon} sản phẩm!", "Tồn Kho Tối Đa", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
             }
@@ -677,7 +794,7 @@ namespace CongNghenetBTL.GiaoDien
         private void BtnXoaHetGioHang_Click(object sender, RoutedEventArgs e)
         {
             if (_gioHang.Count == 0) return;
-            if (MessageBox.Show("Bạn có chắc chắn muốn xóa toàn bộ sản phẩm trong giỏ hàng?", "Xóa Giỏ Hàng", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (HienThongBao("Bạn có chắc chắn muốn xóa toàn bộ sản phẩm trong giỏ hàng?", "Xóa Giỏ Hàng", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 _gioHang.Clear();
                 CapNhatBadgeGioHang();
@@ -700,7 +817,7 @@ namespace CongNghenetBTL.GiaoDien
         {
             if (_gioHang.Count == 0)
             {
-                MessageBox.Show("Giỏ hàng của bạn đang trống! Vui lòng chọn ít nhất 1 sản phẩm trước khi đặt hàng.", "Giỏ Hàng Trống", MessageBoxButton.OK, MessageBoxImage.Warning);
+                HienThongBao("Giỏ hàng của bạn đang trống! Vui lòng chọn ít nhất 1 sản phẩm trước khi đặt hàng.", "Giỏ Hàng Trống", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -711,21 +828,21 @@ namespace CongNghenetBTL.GiaoDien
 
             if (string.IsNullOrEmpty(hoTen))
             {
-                MessageBox.Show("Vui lòng nhập họ và tên người nhận hàng!", "Thiếu Thông Tin", MessageBoxButton.OK, MessageBoxImage.Warning);
+                HienThongBao("Vui lòng nhập họ và tên người nhận hàng!", "Thiếu Thông Tin", MessageBoxButton.OK, MessageBoxImage.Warning);
                 txtKhachDatHoTen.Focus();
                 return;
             }
 
             if (string.IsNullOrEmpty(soDienThoai))
             {
-                MessageBox.Show("Vui lòng nhập số điện thoại nhận hàng!", "Thiếu Thông Tin", MessageBoxButton.OK, MessageBoxImage.Warning);
+                HienThongBao("Vui lòng nhập số điện thoại nhận hàng!", "Thiếu Thông Tin", MessageBoxButton.OK, MessageBoxImage.Warning);
                 txtKhachDatSoDienThoai.Focus();
                 return;
             }
 
             if (string.IsNullOrEmpty(diaChi))
             {
-                MessageBox.Show("Vui lòng nhập địa chỉ giao hàng chi tiết!", "Thiếu Thông Tin", MessageBoxButton.OK, MessageBoxImage.Warning);
+                HienThongBao("Vui lòng nhập địa chỉ giao hàng chi tiết!", "Thiếu Thông Tin", MessageBoxButton.OK, MessageBoxImage.Warning);
                 txtKhachDatDiaChi.Focus();
                 return;
             }
@@ -785,7 +902,7 @@ namespace CongNghenetBTL.GiaoDien
 
             if (_hoaDonBLL.TaoHoaDon(hoaDon, out int maHDMoi, out string thongBao))
             {
-                MessageBox.Show(
+                HienThongBao(
                     $"🎉 ĐẶT HÀNG THÀNH CÔNG!\n\n" +
                     $"• Mã đơn hàng: #HD{maHDMoi}\n" +
                     $"• Người nhận: {hoTen} ({soDienThoai})\n" +
@@ -803,15 +920,13 @@ namespace CongNghenetBTL.GiaoDien
                 NapDanhSachSanPham();
 
                 tabNavDonHang.IsChecked = true;
-                txtTraCuuSDT.Text = soDienThoai;
-                if (maKH > 0)
-                {
-                    TaiLichSuDonHang(maKH);
-                }
+                if (dpTraCuuTuNgay != null) dpTraCuuTuNgay.SelectedDate = DateTime.Today;
+                if (dpTraCuuDenNgay != null) dpTraCuuDenNgay.SelectedDate = DateTime.Today;
+                TaiLichSuDonHang(maKH, DateTime.Today, DateTime.Today);
             }
             else
             {
-                MessageBox.Show("Đặt hàng thất bại: " + thongBao, "Lỗi Đặt Hàng", MessageBoxButton.OK, MessageBoxImage.Error);
+                HienThongBao("Đặt hàng thất bại: " + thongBao, "Lỗi Đặt Hàng", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -821,42 +936,45 @@ namespace CongNghenetBTL.GiaoDien
 
         private void BtnTraCuuDon_Click(object sender, RoutedEventArgs e)
         {
-            string sdt = txtTraCuuSDT.Text.Trim();
-            if (string.IsNullOrEmpty(sdt))
-            {
-                MessageBox.Show("Vui lòng nhập số điện thoại để tra cứu đơn hàng!", "Nhập Số Điện Thoại", MessageBoxButton.OK, MessageBoxImage.Warning);
-                txtTraCuuSDT.Focus();
-                return;
-            }
-
-            var kh = _khachHangBLL.LayTheoSoDienThoai(sdt);
-            if (kh == null)
-            {
-                MessageBox.Show($"Không tìm thấy khách hàng nào với số điện thoại '{sdt}'!", "Không Tìm Thấy", MessageBoxButton.OK, MessageBoxImage.Information);
-                dgvLichSuDonKhach.ItemsSource = null;
-                dgvChiTietDonKhach.ItemsSource = null;
-                return;
-            }
-
-            TaiLichSuDonHang(kh.MaKH);
+            int maKH = PhienDangNhap.KhachDaDangNhap ? PhienDangNhap.KhachHangHienTai.MaKH : 0;
+            DateTime? tuNgay = dpTraCuuTuNgay?.SelectedDate;
+            DateTime? denNgay = dpTraCuuDenNgay?.SelectedDate;
+            TaiLichSuDonHang(maKH, tuNgay, denNgay);
         }
 
-        private void TxtTraCuuSDT_KeyDown(object sender, KeyEventArgs e)
+        private void BtnHomNayDon_Click(object sender, RoutedEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                BtnTraCuuDon_Click(sender, e);
-            }
+            if (dpTraCuuTuNgay != null) dpTraCuuTuNgay.SelectedDate = DateTime.Today;
+            if (dpTraCuuDenNgay != null) dpTraCuuDenNgay.SelectedDate = DateTime.Today;
+            int maKH = PhienDangNhap.KhachDaDangNhap ? PhienDangNhap.KhachHangHienTai.MaKH : 0;
+            TaiLichSuDonHang(maKH, DateTime.Today, DateTime.Today);
         }
 
-        private void TaiLichSuDonHang(int maKH)
+        private void BtnTatCaDon_Click(object sender, RoutedEventArgs e)
         {
-            var dsDon = _hoaDonBLL.LayLichSuTheoKhachHang(maKH);
+            if (dpTraCuuTuNgay != null) dpTraCuuTuNgay.SelectedDate = null;
+            if (dpTraCuuDenNgay != null) dpTraCuuDenNgay.SelectedDate = null;
+            int maKH = PhienDangNhap.KhachDaDangNhap ? PhienDangNhap.KhachHangHienTai.MaKH : 0;
+            TaiLichSuDonHang(maKH, null, null);
+        }
+
+        private void TaiLichSuDonHang(int maKH, DateTime? tuNgay = null, DateTime? denNgay = null)
+        {
+            List<HoaDon> dsDon;
+            if (maKH > 0)
+            {
+                dsDon = _hoaDonBLL.LayLichSuTheoKhachHang(maKH, tuNgay, denNgay);
+            }
+            else
+            {
+                dsDon = _hoaDonBLL.LayDanhSach(tuNgay, denNgay);
+            }
+
             dgvLichSuDonKhach.ItemsSource = dsDon;
             dgvChiTietDonKhach.ItemsSource = null;
             txtTieuDeChiTietDon.Text = "Chi Tiết Các Món Trong Đơn (Chọn 1 đơn bên trái)";
 
-            if (dsDon.Count > 0)
+            if (dsDon != null && dsDon.Count > 0)
             {
                 dgvLichSuDonKhach.SelectedIndex = 0;
             }
@@ -927,7 +1045,7 @@ namespace CongNghenetBTL.GiaoDien
 
             if (string.IsNullOrEmpty(hoTen))
             {
-                MessageBox.Show("Họ tên không được để trống!", "Thiếu Thông Tin", MessageBoxButton.OK, MessageBoxImage.Warning);
+                HienThongBao("Họ tên không được để trống!", "Thiếu Thông Tin", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -937,12 +1055,12 @@ namespace CongNghenetBTL.GiaoDien
 
             if (_khachHangBLL.CapNhat(kh, out string tb))
             {
-                MessageBox.Show("Cập nhật thông tin tài khoản thành công!", "Thành Công", MessageBoxButton.OK, MessageBoxImage.Information);
+                HienThongBao("Cập nhật thông tin tài khoản thành công!", "Thành Công", MessageBoxButton.OK, MessageBoxImage.Information);
                 KiemTraTrangThaiDangNhapKhach();
             }
             else
             {
-                MessageBox.Show("Lỗi khi cập nhật: " + tb, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                HienThongBao("Lỗi khi cập nhật: " + tb, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -957,14 +1075,14 @@ namespace CongNghenetBTL.GiaoDien
 
             if (_khachHangBLL.DoiMatKhau(kh.MaKH, mkCu, mkMoi, xacNhan, out string tb))
             {
-                MessageBox.Show("Đổi mật khẩu bảo mật thành công! Mật khẩu mới đã được băm SHA-256 an toàn.", "Bảo Mật Thành Công", MessageBoxButton.OK, MessageBoxImage.Information);
+                HienThongBao("Đổi mật khẩu bảo mật thành công! Mật khẩu mới đã được băm SHA-256 an toàn.", "Bảo Mật Thành Công", MessageBoxButton.OK, MessageBoxImage.Information);
                 txtDoiMKCu.Password = string.Empty;
                 txtDoiMKMoi.Password = string.Empty;
                 txtDoiMKXacNhan.Password = string.Empty;
             }
             else
             {
-                MessageBox.Show("Đổi mật khẩu thất bại:\n" + tb, "Lỗi Đổi Mật Khẩu", MessageBoxButton.OK, MessageBoxImage.Warning);
+                HienThongBao("Đổi mật khẩu thất bại:\n" + tb, "Lỗi Đổi Mật Khẩu", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -1057,7 +1175,7 @@ namespace CongNghenetBTL.GiaoDien
                 KiemTraTrangThaiDangNhapKhach();
                 CapNhatTongTienGioHang();
 
-                MessageBox.Show($"Chào mừng quý khách {kh.HoTen} đã đăng nhập thành công!\nBạn thuộc {kh.HienThiHang}.", "Đăng Nhập Thành Công", MessageBoxButton.OK, MessageBoxImage.Information);
+                HienThongBao($"Chào mừng quý khách {kh.HoTen} đã đăng nhập thành công!\nBạn thuộc {kh.HienThiHang}.", "Đăng Nhập Thành Công", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
@@ -1091,7 +1209,7 @@ namespace CongNghenetBTL.GiaoDien
                 KiemTraTrangThaiDangNhapKhach();
                 CapNhatTongTienGioHang();
 
-                MessageBox.Show("🎉 " + thongBao, "Đăng Ký Thành Công", MessageBoxButton.OK, MessageBoxImage.Information);
+                HienThongBao("🎉 " + thongBao, "Đăng Ký Thành Công", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
@@ -1107,9 +1225,229 @@ namespace CongNghenetBTL.GiaoDien
             PhienDangNhap.DangXuatKhachHang();
             KiemTraTrangThaiDangNhapKhach();
             CapNhatTongTienGioHang();
-            MessageBox.Show("Đã đăng xuất tài khoản khách hàng!", "Đăng Xuất", MessageBoxButton.OK, MessageBoxImage.Information);
+            HienThongBao("Đã đăng xuất tài khoản khách hàng!", "Đăng Xuất", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         #endregion
-    }
+    
+        #region PHUONG THUC HO TRO DEMO & KIEM THU TU DONG BEN KHACH HANG
+
+        private MessageBoxResult HienThongBao(string noiDung, string tieuDe = "Thông Báo", MessageBoxButton nut = MessageBoxButton.OK, MessageBoxImage icon = MessageBoxImage.Information)
+        {
+            string bieuTuong = "🎉";
+            if (icon == MessageBoxImage.Error || icon == MessageBoxImage.Warning) bieuTuong = "⚠️";
+            HienThongBaoChung(tieuDe, noiDung, bieuTuong);
+            return MessageBoxResult.Yes;
+        }
+
+        public void BtnDongThongBaoChung_Click(object sender, RoutedEventArgs e)
+        {
+            DongThongBaoChung();
+        }
+
+        public void ModalThongBao_BackgroundClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource == modalThongBaoChung)
+            {
+                DongThongBaoChung();
+            }
+        }
+
+        public void HienThongBaoChung(string tieuDe, string noiDung, string bieuTuong = "🎉")
+        {
+            if (txtThongBaoTieuDe != null) txtThongBaoTieuDe.Text = tieuDe;
+            if (txtThongBaoNoiDung != null) txtThongBaoNoiDung.Text = noiDung;
+            if (txtThongBaoBieuTuong != null) txtThongBaoBieuTuong.Text = bieuTuong;
+            if (modalThongBaoChung != null) modalThongBaoChung.Visibility = Visibility.Visible;
+        }
+
+        public void DongThongBaoChung()
+        {
+            if (modalThongBaoChung != null) modalThongBaoChung.Visibility = Visibility.Collapsed;
+        }
+
+        public void DongModalChiTiet()
+        {
+            if (modalChiTietSP != null) modalChiTietSP.Visibility = Visibility.Collapsed;
+        }
+
+        public void DatOverlayDemo(string buocHienTai)
+        {
+            if (pnlDemoOverlay != null && txtDemoStep != null)
+            {
+                txtDemoStep.Text = buocHienTai;
+                pnlDemoOverlay.Visibility = Visibility.Visible;
+            }
+        }
+
+        public void AnOverlayDemo()
+        {
+            if (pnlDemoOverlay != null) pnlDemoOverlay.Visibility = Visibility.Collapsed;
+        }
+
+        public void ChonTab(int index)
+        {
+            if (index == 0) tabNavMuaSam.IsChecked = true;
+            else if (index == 1) tabNavGioHang.IsChecked = true;
+            else if (index == 2) tabNavDonHang.IsChecked = true;
+            else if (index == 3) tabNavTaiKhoan.IsChecked = true;
+            TabNav_Checked(null, null);
+        }
+
+        public void ChonDanhMucTheoTen(string tuKhoa)
+        {
+            foreach (var child in pnlDanhMucPills.Children)
+            {
+                if (child is RadioButton rdo && rdo.Content != null && rdo.Content.ToString().IndexOf(tuKhoa, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    rdo.IsChecked = true;
+                    FilterDanhMuc_Checked(rdo, null);
+                    break;
+                }
+            }
+        }
+
+        public void TimKiem(string tuKhoa)
+        {
+            txtTimKiemSanPham.Text = tuKhoa;
+            ApDungBoLoc();
+        }
+
+        public void ChonSize(string size)
+        {
+            for (int i = 0; i < cboLocSize.Items.Count; i++)
+            {
+                if (cboLocSize.Items[i] is ComboBoxItem item && item.Content != null && item.Content.ToString().IndexOf(size, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    cboLocSize.SelectedIndex = i;
+                    break;
+                }
+            }
+            ApDungBoLoc();
+        }
+
+        public void ChonGia(string gia)
+        {
+            for (int i = 0; i < cboLocGia.Items.Count; i++)
+            {
+                if (cboLocGia.Items[i] is ComboBoxItem item && item.Content != null && item.Content.ToString().IndexOf(gia, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    cboLocGia.SelectedIndex = i;
+                    break;
+                }
+            }
+            ApDungBoLoc();
+        }
+
+        public void ChonSapXep(string sx)
+        {
+            for (int i = 0; i < cboSapXep.Items.Count; i++)
+            {
+                if (cboSapXep.Items[i] is ComboBoxItem item && item.Content != null && item.Content.ToString().IndexOf(sx, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    cboSapXep.SelectedIndex = i;
+                    break;
+                }
+            }
+            ApDungBoLoc();
+        }
+
+        public void MoChiTietSanPhamTheoTen(string tenSP)
+        {
+            var sp = _danhSachSanPhamGoc.FirstOrDefault(x => x.TenSP.IndexOf(tenSP, StringComparison.OrdinalIgnoreCase) >= 0);
+            if (sp != null)
+            {
+                HienModalChiTiet(sp);
+            }
+        }
+
+        public void TangSoLuongMuaModal()
+        {
+            BtnModalTangSL_Click(null, null);
+        }
+
+        public void ThemVaoGioTuModal()
+        {
+            BtnModalThemVaoGio_Click(null, null);
+        }
+
+        public void ThemVaoGioNhanh(string tuKhoaSP)
+        {
+            var sp = _danhSachSanPhamGoc.FirstOrDefault(x => x.TenSP.IndexOf(tuKhoaSP, StringComparison.OrdinalIgnoreCase) >= 0);
+            if (sp != null)
+            {
+                ThemVaoGioHang(sp, 1);
+            }
+        }
+
+        public void MoModalDangNhapKhach()
+        {
+            HienModalDangNhapKhach(true);
+        }
+
+        public void DienKhachVIP()
+        {
+            BtnDienKhachVIPMau_Click(null, null);
+        }
+
+        public void DangNhapKhachHang()
+        {
+            BtnThucHienDangNhapKhach_Click(null, null);
+        }
+
+        public void TangGiamSoLuongGioHang(bool tang)
+        {
+            if (_gioHang.Count > 0)
+            {
+                var item = _gioHang[0];
+                if (tang)
+                {
+                    item.SoLuong++;
+                    item.ThanhTien = item.DonGia * item.SoLuong;
+                }
+                else if (item.SoLuong > 1)
+                {
+                    item.SoLuong--;
+                    item.ThanhTien = item.DonGia * item.SoLuong;
+                }
+                dgvGioHangKhach.Items.Refresh();
+                CapNhatBadgeGioHang();
+                CapNhatTongTienGioHang();
+            }
+        }
+
+        public void ChonPTTT(int pttt)
+        {
+            if (pttt == 0)
+            {
+                radCOD.IsChecked = true;
+                pnlThongTinCK.Visibility = Visibility.Collapsed;
+            }
+            else if (pttt == 1)
+            {
+                radChuyenKhoan.IsChecked = true;
+                pnlThongTinCK.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                radThe.IsChecked = true;
+                pnlThongTinCK.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        public void ThucHienDatHangDemo()
+        {
+            BtnXacNhanDatHang_Click(null, null);
+        }
+
+        public void ChonDonHangMoiNhat()
+        {
+            if (dgvLichSuDonKhach.Items.Count > 0)
+            {
+                dgvLichSuDonKhach.SelectedIndex = 0;
+            }
+        }
+
+        #endregion
+}
 }

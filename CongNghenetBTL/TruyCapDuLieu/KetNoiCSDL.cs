@@ -8,7 +8,7 @@ namespace CongNghenetBTL.TruyCapDuLieu
     public static class KetNoiCSDL
     {
         private static readonly string ChuoiKetNoiDuPhong = 
-            @"Server=localhost;Port=3306;Database=QLBanQuanAoDB;Uid=root;Pwd=12345;Charset=utf8mb4;";
+            @"Server=localhost;Port=3306;Database=QLBanQuanAoDB;Uid=root;Pwd=12345;Charset=utf8mb4;SslMode=None;AllowPublicKeyRetrieval=True;";
 
         public static string ChuoiKetNoi
         {

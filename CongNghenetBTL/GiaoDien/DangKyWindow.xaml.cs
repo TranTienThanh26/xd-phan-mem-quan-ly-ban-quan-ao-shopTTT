@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using CongNghenetBTL.MoHinh;
@@ -10,14 +9,14 @@ namespace CongNghenetBTL.GiaoDien
 {
     public partial class DangKyWindow : Window
     {
-        private readonly NguoiDungBLL _nghiepVu = new NguoiDungBLL();
+        private readonly KhachHangBLL _khachHangBLL = new KhachHangBLL();
 
-        public string TenDangNhapMoi { get; private set; }
+        public string SoDienThoaiMoi { get; private set; }
 
         public DangKyWindow()
         {
             InitializeComponent();
-            txtTenDangNhap.Focus();
+            txtHoTen.Focus();
         }
 
         private void CuaSo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -36,32 +35,28 @@ namespace CongNghenetBTL.GiaoDien
 
         private void NutXacNhanDangKy_Click(object sender, RoutedEventArgs e)
         {
-            string tenDangNhap = txtTenDangNhap.Text.Trim();
             string hoTen = txtHoTen.Text.Trim();
+            string soDienThoai = txtSoDienThoai.Text.Trim();
             string matKhau = txtMatKhau.Password;
             string xacNhanMatKhau = txtXacNhanMatKhau.Password;
             string email = txtEmail.Text.Trim();
-            string soDienThoai = txtSoDienThoai.Text.Trim();
-            string vaiTro = (cboVaiTro.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Nhân viên";
+            string diaChi = txtDiaChi.Text.Trim();
 
-            var nd = new NguoiDung
+            var kh = new KhachHang
             {
-                TenDangNhap = tenDangNhap,
                 HoTen = hoTen,
-                MatKhau = matKhau,
-                Email = email,
                 SoDienThoai = soDienThoai,
-                VaiTro = vaiTro,
-                TrangThai = true
+                Email = email,
+                DiaChi = diaChi
             };
 
-            bool thanhCong = _nghiepVu.DangKy(nd, xacNhanMatKhau, out string thongBao);
+            bool thanhCong = _khachHangBLL.DangKy(kh, matKhau, xacNhanMatKhau, out string thongBao);
 
             if (thanhCong)
             {
-                TenDangNhapMoi = tenDangNhap;
+                SoDienThoaiMoi = soDienThoai;
                 MessageBox.Show(
-                    "Đăng ký tài khoản thành công! Bạn có thể sử dụng tài khoản này để đăng nhập ngay bây giờ.",
+                    "Đăng ký tài khoản người dùng thành công! Bạn có thể sử dụng Số điện thoại và Mật khẩu vừa tạo để đăng nhập vào cửa hàng.",
                     "Đăng Ký Thành Công",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);

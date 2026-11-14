@@ -10,7 +10,8 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent"
+        ShowInTaskbar="True">
 
     <!-- KHUNG CHÍNH CỬA SỔ BO GÓC CAO CẤP -->
     <Border CornerRadius="14" Background="{StaticResource MauNenChinhBrush}" Effect="{StaticResource BongNoiBat}" Margin="10">
@@ -335,9 +336,9 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                    <Button Content="-" Width="26" Height="26" Style="{StaticResource NutVien}" Padding="0" Click="BtnGiamSoLuong_Click" Tag="{Binding MaSP}" />
+                                                    <Button Content="-" Width="26" Height="26" Style="{StaticResource NutVien}" Padding="0" Click="BtnGiamSoLuong_Click" Tag="{Binding}" />
                                                     <TextBlock Text="{Binding SoLuong}" FontSize="13" FontWeight="Bold" Width="32" TextAlignment="Center" VerticalAlignment="Center" />
-                                                    <Button Content="+" Width="26" Height="26" Style="{StaticResource NutVien}" Padding="0" Click="BtnTangSoLuong_Click" Tag="{Binding MaSP}" />
+                                                    <Button Content="+" Width="26" Height="26" Style="{StaticResource NutVien}" Padding="0" Click="BtnTangSoLuong_Click" Tag="{Binding}" />
                                                 </StackPanel>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
@@ -348,7 +349,7 @@
                                     <DataGridTemplateColumn Header="Xóa" Width="60">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Button Content="🗑️" Style="{StaticResource NutBieuTuong}" Height="28" Width="28" Click="BtnXoaMonKhoiGio_Click" Tag="{Binding MaSP}" ToolTip="Xóa món này khỏi giỏ" />
+                                                <Button Content="🗑️" Style="{StaticResource NutBieuTuong}" Height="28" Width="28" Click="BtnXoaMonKhoiGio_Click" Tag="{Binding}" ToolTip="Xóa món này khỏi giỏ" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -442,17 +443,31 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <!-- KHUNG TRA CỨU ĐƠN HÀNG -->
-                    <Border Grid.Row="0" Background="White" CornerRadius="12" Padding="16" Margin="0,0,0,16" Effect="{StaticResource BongTheCard}">
+                    <!-- KHUNG TRA CỨU ĐƠN HÀNG THEO NGÀY -->
+                    <Border Grid.Row="0" Background="White" CornerRadius="12" Padding="14,12" Margin="0,0,0,16" Effect="{StaticResource BongTheCard}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="150" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="📦 Tra Cứu Lịch Sử Đơn Mua Bằng SĐT:" FontSize="15" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" VerticalAlignment="Center" Margin="0,0,16,0" />
-                            <TextBox x:Name="txtTraCuuSDT" Grid.Column="1" Style="{StaticResource OVanBanChuan}" Height="38" Margin="0,0,12,0" KeyDown="TxtTraCuuSDT_KeyDown" />
-                            <Button Grid.Column="2" Content="🔍 Tra Cứu Đơn" Style="{StaticResource NutChinh}" Height="38" Padding="16,0" Click="BtnTraCuuDon_Click" />
+                            <TextBlock Grid.Column="0" Text="📅 Tra Cứu Đơn Hàng Theo Ngày:" FontSize="15" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                            
+                            <TextBlock Grid.Column="1" Text="Từ ngày:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="13" Foreground="{StaticResource MauChuPhuBrush}" />
+                            <DatePicker Grid.Column="2" x:Name="dpTraCuuTuNgay" Height="36" VerticalContentAlignment="Center" Margin="0,0,14,0" />
+
+                            <TextBlock Grid.Column="3" Text="Đến ngày:" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="13" Foreground="{StaticResource MauChuPhuBrush}" />
+                            <DatePicker Grid.Column="4" x:Name="dpTraCuuDenNgay" Height="36" VerticalContentAlignment="Center" Margin="0,0,14,0" />
+
+                            <StackPanel Grid.Column="6" Orientation="Horizontal">
+                                <Button Content="🔍 Tra Cứu" Style="{StaticResource NutChinh}" Height="36" Padding="14,0" Margin="0,0,8,0" Click="BtnTraCuuDon_Click" />
+                                <Button Content="⚡ Hôm Nay" Style="{StaticResource NutPhu}" Height="36" Padding="12,0" Margin="0,0,8,0" Click="BtnHomNayDon_Click" />
+                                <Button Content="🔄 Tất Cả" Style="{StaticResource NutVien}" Height="36" Padding="12,0" Click="BtnTatCaDon_Click" />
+                            </StackPanel>
                         </Grid>
                     </Border>
 
@@ -473,9 +488,10 @@
                                 <TextBlock Grid.Row="0" Text="Danh Sách Đơn Hàng Của Bạn" FontSize="15" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" Margin="0,0,0,10" />
                                 <DataGrid x:Name="dgvLichSuDonKhach" Grid.Row="1" Style="{StaticResource BangDuLieu}" SelectionChanged="DgvLichSuDonKhach_SelectionChanged">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Mã Đơn" Binding="{Binding MaHD, StringFormat=#HD{0}}" Width="80" />
-                                        <DataGridTextColumn Header="Ngày Đặt" Binding="{Binding NgayLap, StringFormat=dd/MM/yyyy HH:mm}" Width="130" />
-                                        <DataGridTextColumn Header="Thanh Toán" Binding="{Binding ThanhTien, StringFormat={}{0:N0} đ}" Width="110" />
+                                        <DataGridTextColumn Header="Mã Đơn" Binding="{Binding MaHD, StringFormat=#HD{0}}" Width="75" />
+                                        <DataGridTextColumn Header="Ngày Đặt" Binding="{Binding NgayLap, StringFormat=dd/MM/yyyy HH:mm}" Width="125" />
+                                        <DataGridTextColumn Header="Khách Hàng" Binding="{Binding TenKhachHang}" Width="120" />
+                                        <DataGridTextColumn Header="Thanh Toán" Binding="{Binding ThanhTien, StringFormat={}{0:N0} đ}" Width="105" />
                                         <DataGridTextColumn Header="Hình Thức" Binding="{Binding PhuongThucTT}" Width="*" />
                                     </DataGrid.Columns>
                                 </DataGrid>
@@ -614,10 +630,10 @@
             </Border>
 
             <!-- ============================================== -->
-            <!-- MODAL 1: XEM CHI TIẾT SẢN PHẨM (QUICK VIEW) -->
+            <!-- MODAL 1: XEM CHI TIẾT SẢN PHẨM & CHỌN SIZE, SỐ LƯỢNG -->
             <!-- ============================================== -->
             <Border x:Name="modalChiTietSP" Grid.RowSpan="3" Background="#80000000" Visibility="Collapsed" MouseLeftButtonDown="ModalSP_BackgroundClick">
-                <Border Background="White" CornerRadius="16" Width="680" MaxHeight="620" Padding="28" VerticalAlignment="Center" HorizontalAlignment="Center" Effect="{StaticResource BongNoiBat}">
+                <Border Background="White" CornerRadius="16" Width="720" MaxHeight="640" Padding="28" VerticalAlignment="Center" HorizontalAlignment="Center" Effect="{StaticResource BongNoiBat}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -626,7 +642,7 @@
 
                         <!-- TIÊU ĐỀ & NÚT ĐÓNG MODAL -->
                         <Grid Grid.Row="0" Margin="0,0,0,16">
-                            <TextBlock Text="👗 Chi Tiết Sản Phẩm Thời Trang" FontSize="18" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" />
+                            <TextBlock Text="👗 Chi Tiết Sản Phẩm &amp; Thêm Vào Giỏ Hàng" FontSize="18" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" />
                             <Button Style="{StaticResource NutBieuTuong}" Content="✕" Width="30" Height="30" HorizontalAlignment="Right" Click="BtnDongModalSP_Click" />
                         </Grid>
 
@@ -637,41 +653,55 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- ẢNH LỚN SẢN PHẨM -->
-                            <Border Grid.Column="0" CornerRadius="12" Background="#F1F5F9" ClipToBounds="True" Height="340" Margin="0,0,20,0">
+                            <Border Grid.Column="0" CornerRadius="12" Background="#F1F5F9" ClipToBounds="True" Height="340" Margin="0,0,20,0" VerticalAlignment="Top">
                                 <Image x:Name="imgModalAnhSP" Stretch="UniformToFill" />
                             </Border>
 
                             <!-- THÔNG TIN CHI TIẾT SẢN PHẨM -->
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <Border x:Name="pnlModalTagDM" Background="{StaticResource MauChinhNhatBrush}" CornerRadius="4" Padding="8,3" HorizontalAlignment="Left" Margin="0,0,0,8">
-                                    <TextBlock x:Name="txtModalDanhMuc" Text="Áo Sơ Mi" FontSize="11" FontWeight="Bold" Foreground="{StaticResource MauChinhBrush}" />
-                                </Border>
+                            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                <StackPanel VerticalAlignment="Top" Margin="0,0,4,0">
+                                    <Border x:Name="pnlModalTagDM" Background="{StaticResource MauChinhNhatBrush}" CornerRadius="4" Padding="8,3" HorizontalAlignment="Left" Margin="0,0,0,8">
+                                        <TextBlock x:Name="txtModalDanhMuc" Text="Áo Sơ Mi" FontSize="11" FontWeight="Bold" Foreground="{StaticResource MauChinhBrush}" />
+                                    </Border>
 
-                                <TextBlock x:Name="txtModalTenSP" Text="Áo Sơ Mi Oxford Nam Dài Tay" FontSize="18" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" TextWrapping="Wrap" Margin="0,0,0,8" />
-                                
-                                <TextBlock x:Name="txtModalGiaBan" Text="350.000 đ" FontSize="24" FontWeight="Black" Foreground="{StaticResource MauThoiTrangBrush}" Margin="0,0,0,14" />
+                                    <TextBlock x:Name="txtModalTenSP" Text="Áo Sơ Mi Oxford Nam Dài Tay" FontSize="18" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" TextWrapping="Wrap" Margin="0,0,0,6" />
+                                    
+                                    <TextBlock x:Name="txtModalGiaBan" Text="350.000 đ" FontSize="22" FontWeight="Black" Foreground="{StaticResource MauThoiTrangBrush}" Margin="0,0,0,10" />
 
-                                <Border Background="#F8FAFC" CornerRadius="8" Padding="12" Margin="0,0,0,14">
-                                    <StackPanel>
-                                        <TextBlock x:Name="txtModalSizeMau" Text="Kích cỡ: L | Màu sắc: Trắng" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" Margin="0,0,0,4" />
-                                        <TextBlock x:Name="txtModalChatLieu" Text="Chất liệu vải: Cotton Oxford cao cấp" FontSize="12" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,0,0,4" />
-                                        <TextBlock x:Name="txtModalTonKho" Text="Tồn kho: 45 cái" FontSize="12" FontWeight="Bold" Foreground="{StaticResource MauThanhCongBrush}" />
+                                    <Border Background="#F8FAFC" CornerRadius="8" Padding="12" Margin="0,0,0,12">
+                                        <StackPanel>
+                                            <TextBlock x:Name="txtModalSizeMau" Text="Màu sắc: Trắng tinh khôi" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" Margin="0,0,0,4" />
+                                            <TextBlock x:Name="txtModalChatLieu" Text="Chất liệu vải: Cotton Oxford cao cấp" FontSize="12" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,0,0,4" />
+                                            <TextBlock x:Name="txtModalTonKho" Text="Tồn kho: 45 cái" FontSize="12" FontWeight="Bold" Foreground="{StaticResource MauThanhCongBrush}" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- BỘ CHỌN KÍCH CỠ (SIZE) -->
+                                    <StackPanel Margin="0,0,0,12">
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                            <TextBlock Text="Kích cỡ (Size):" FontSize="13" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" VerticalAlignment="Center" />
+                                            <TextBlock x:Name="txtModalSizeHienTai" Text="L" FontSize="13" FontWeight="Black" Foreground="{StaticResource MauChinhBrush}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <WrapPanel x:Name="pnlModalChonSize" Orientation="Horizontal" Margin="0,2,0,0" />
                                     </StackPanel>
-                                </Border>
 
-                                <TextBlock Text="Mô tả sản phẩm:" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,0,0,2" />
-                                <TextBlock x:Name="txtModalMoTa" Text="Form dáng thanh lịch, thoáng mát cả ngày." FontSize="12" Foreground="{StaticResource MauChuChinhBrush}" TextWrapping="Wrap" Margin="0,0,0,16" />
+                                    <!-- CHỌN SỐ LƯỢNG VÀ NÚT MUA -->
+                                    <StackPanel Margin="0,0,0,12">
+                                        <TextBlock Text="Số lượng muốn mua:" FontSize="13" FontWeight="Bold" Margin="0,0,0,6" Foreground="{StaticResource MauChuChinhBrush}" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="-" Width="32" Height="32" Style="{StaticResource NutVien}" Click="BtnModalGiamSL_Click" Cursor="Hand" />
+                                            <TextBox x:Name="txtModalSoLuongMua" Text="1" Width="50" Height="32" TextAlignment="Center" VerticalContentAlignment="Center" FontSize="13" FontWeight="Bold" Margin="4,0" />
+                                            <Button Content="+" Width="32" Height="32" Style="{StaticResource NutVien}" Click="BtnModalTangSL_Click" Cursor="Hand" />
+                                            <TextBlock x:Name="txtModalGhiChuTonKho" Text="(Có sẵn trong kho)" FontSize="12" Foreground="{StaticResource MauChuPhuBrush}" VerticalAlignment="Center" Margin="10,0,0,0" />
+                                        </StackPanel>
+                                    </StackPanel>
 
-                                <!-- CHỌN SỐ LƯỢNG VÀ NÚT MUA -->
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
-                                    <TextBlock Text="Số lượng:" VerticalAlignment="Center" FontSize="13" FontWeight="SemiBold" Margin="0,0,12,0" />
-                                    <Button Content="-" Width="32" Height="32" Style="{StaticResource NutVien}" Click="BtnModalGiamSL_Click" />
-                                    <TextBox x:Name="txtModalSoLuongMua" Text="1" Width="45" Height="32" TextAlignment="Center" VerticalContentAlignment="Center" FontSize="13" FontWeight="Bold" IsReadOnly="True" Margin="4,0" />
-                                    <Button Content="+" Width="32" Height="32" Style="{StaticResource NutVien}" Click="BtnModalTangSL_Click" />
+                                    <TextBlock Text="Mô tả sản phẩm:" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,0,0,2" />
+                                    <TextBlock x:Name="txtModalMoTa" Text="Form dáng thanh lịch, thoáng mát cả ngày." FontSize="12" Foreground="{StaticResource MauChuChinhBrush}" TextWrapping="Wrap" Margin="0,0,0,14" />
+
+                                    <Button x:Name="btnModalThemVaoGio" Content="🛒 Thêm Vào Giỏ Hàng" Style="{StaticResource NutChinh}" Height="42" FontSize="13" FontWeight="Bold" Click="BtnModalThemVaoGio_Click" />
                                 </StackPanel>
-
-                                <Button x:Name="btnModalThemVaoGio" Content="🛒 Thêm Vào Giỏ Hàng" Style="{StaticResource NutChinh}" Height="44" FontSize="14" FontWeight="Bold" Click="BtnModalThemVaoGio_Click" />
-                            </StackPanel>
+                            </ScrollViewer>
                         </Grid>
                     </Grid>
                 </Border>
@@ -747,6 +777,30 @@
                         </StackPanel>
                     </StackPanel>
                 </Border>
+            </Border>
+
+            <!-- ============================================== -->
+            <!-- MODAL THÔNG BÁO CHUNG HIỆN ĐẠI (IN-APP DIALOG) -->
+            <!-- ============================================== -->
+            <Border x:Name="modalThongBaoChung" Grid.RowSpan="3" Background="#80000000" Visibility="Collapsed" MouseLeftButtonDown="ModalThongBao_BackgroundClick">
+                <Border Background="White" CornerRadius="16" Width="480" Padding="30" VerticalAlignment="Center" HorizontalAlignment="Center" Effect="{StaticResource BongNoiBat}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock x:Name="txtThongBaoBieuTuong" Text="🎉" FontSize="44" HorizontalAlignment="Center" Margin="0,0,0,10" />
+                        <TextBlock x:Name="txtThongBaoTieuDe" Text="Thông Báo" FontSize="18" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" HorizontalAlignment="Center" Margin="0,0,0,8" />
+                        <TextBlock x:Name="txtThongBaoNoiDung" Text="Nội dung thông báo chi tiết..." FontSize="13" Foreground="{StaticResource MauChuPhuBrush}" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,20" LineHeight="20" />
+                        <Button x:Name="btnDongThongBaoChung" Content="Xác Nhận / Đóng" Style="{StaticResource NutChinh}" Height="40" MinWidth="160" Click="BtnDongThongBaoChung_Click" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+            </Border>
+
+            <!-- ============================================== -->
+            <!-- BANNER OVERLAY TIÊU ĐỀ DEMO CHO VIDEO KIỂM THỬ -->
+            <!-- ============================================== -->
+            <Border x:Name="pnlDemoOverlay" Grid.RowSpan="3" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,16,0,0" Background="#F00F172A" CornerRadius="20" Padding="18,10" Visibility="Collapsed" Effect="{StaticResource BongNoiBat}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Width="12" Height="12" CornerRadius="6" Background="#10B981" Margin="0,0,10,0" VerticalAlignment="Center" />
+                    <TextBlock x:Name="txtDemoStep" Text="🎬 BƯỚC 1/10: Kiểm thử giao diện Khách Hàng - TTT Store" FontSize="13" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" />
+                </StackPanel>
             </Border>
         </Grid>
     </Border>

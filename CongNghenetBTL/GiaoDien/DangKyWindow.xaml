@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Đăng Ký Tài Khoản - TTT Store Quản Lý Bán Quần Áo" 
-        Height="680" Width="620"
+        Title="Đăng Ký Tài Khoản Người Dùng - TTT Store" 
+        Height="620" Width="560"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -13,7 +13,7 @@
         MouseLeftButtonDown="CuaSo_MouseLeftButtonDown">
 
     <Border CornerRadius="16" Background="White" Effect="{StaticResource BongNoiBat}" Margin="15">
-        <Grid Margin="32,24">
+        <Grid Margin="30,24">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" /> <!-- Tiêu đề -->
                 <RowDefinition Height="Auto" /> <!-- Thông báo lỗi/thành công -->
@@ -25,18 +25,18 @@
             <Grid Grid.Row="0" Margin="0,0,0,16">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                        <Border Width="40" Height="40" CornerRadius="10" Background="{StaticResource MauChinhNhatBrush}" Margin="0,0,12,0">
-                            <TextBlock Text="👗" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Width="42" Height="42" CornerRadius="12" Background="{StaticResource MauChinhNhatBrush}" Margin="0,0,12,0">
+                            <TextBlock Text="🛍️" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="Đăng Ký Nhân Viên Mới" FontSize="22" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" />
-                            <TextBlock Text="Cấp tài khoản truy cập hệ thống TTT Store" FontSize="13" Foreground="{StaticResource MauChuPhuBrush}" />
+                            <TextBlock Text="Đăng Ký Tài Khoản Người Dùng" FontSize="20" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" />
+                            <TextBlock Text="Tạo tài khoản để mua sắm thời trang và tích điểm thành viên" FontSize="12.5" Foreground="{StaticResource MauChuPhuBrush}" />
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
                 <!-- NÚT ĐÓNG -->
-                <Button Style="{StaticResource NutDongCuaSo}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-8,-12,0" Click="NutHuy_Click" />
+                <Button Style="{StaticResource NutDongCuaSo}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-6,-10,0" Click="NutHuy_Click" />
             </Grid>
 
             <!-- THÔNG BÁO -->
@@ -50,40 +50,30 @@
             <!-- FORM NHẬP THÔNG TIN -->
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="0,0,4,0">
-                    <!-- HÀNG 1: TÊN ĐĂNG NHẬP & HỌ TÊN -->
+                    <!-- HỌ VÀ TÊN -->
+                    <StackPanel Margin="0,0,0,12">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <TextBlock Text="Họ và tên của bạn" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" />
+                            <TextBlock Text=" *" Foreground="{StaticResource MauNguyHiemBrush}" FontWeight="Bold" />
+                        </StackPanel>
+                        <TextBox x:Name="txtHoTen" Style="{StaticResource OVanBan}" Height="38" />
+                    </StackPanel>
+
+                    <!-- SỐ ĐIỆN THOẠI -->
+                    <StackPanel Margin="0,0,0,12">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <TextBlock Text="Số điện thoại (dùng làm tài khoản đăng nhập)" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" />
+                            <TextBlock Text=" *" Foreground="{StaticResource MauNguyHiemBrush}" FontWeight="Bold" />
+                        </StackPanel>
+                        <TextBox x:Name="txtSoDienThoai" Style="{StaticResource OVanBan}" Height="38" />
+                        <TextBlock Text="Ví dụ: 0912345678 (Dùng để đăng nhập và nhận đơn)" FontSize="11" Foreground="{StaticResource MauChuMoBrush}" Margin="2,3,0,0" />
+                    </StackPanel>
+
+                    <!-- HÀNG: MẬT KHẨU & XÁC NHẬN MẬT KHẨU -->
                     <Grid Margin="0,0,0,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="16" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Tên đăng nhập -->
-                        <StackPanel Grid.Column="0">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="Tên đăng nhập" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" />
-                                <TextBlock Text=" *" Foreground="{StaticResource MauNguyHiemBrush}" FontWeight="Bold" />
-                            </StackPanel>
-                            <TextBox x:Name="txtTenDangNhap" Style="{StaticResource OVanBan}" />
-                            <TextBlock Text="Ví dụ: thuha_sales (3-30 ký tự, không dấu)" FontSize="11" Foreground="{StaticResource MauChuMoBrush}" Margin="2,4,0,0" />
-                        </StackPanel>
-
-                        <!-- Họ và tên -->
-                        <StackPanel Grid.Column="2">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                <TextBlock Text="Họ và tên nhân viên" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" />
-                                <TextBlock Text=" *" Foreground="{StaticResource MauNguyHiemBrush}" FontWeight="Bold" />
-                            </StackPanel>
-                            <TextBox x:Name="txtHoTen" Style="{StaticResource OVanBan}" />
-                            <TextBlock Text="Ví dụ: Nguyễn Thu Hà" FontSize="11" Foreground="{StaticResource MauChuMoBrush}" Margin="2,4,0,0" />
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- HÀNG 2: MẬT KHẨU & XÁC NHẬN MẬT KHẨU -->
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="14" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
@@ -93,8 +83,8 @@
                                 <TextBlock Text="Mật khẩu" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" />
                                 <TextBlock Text=" *" Foreground="{StaticResource MauNguyHiemBrush}" FontWeight="Bold" />
                             </StackPanel>
-                            <PasswordBox x:Name="txtMatKhau" Style="{StaticResource OMatKhau}" PasswordChar="●" />
-                            <TextBlock Text="Tối thiểu 6 ký tự" FontSize="11" Foreground="{StaticResource MauChuMoBrush}" Margin="2,4,0,0" />
+                            <PasswordBox x:Name="txtMatKhau" Style="{StaticResource OMatKhau}" Height="38" PasswordChar="●" />
+                            <TextBlock Text="Tối thiểu 4 ký tự" FontSize="11" Foreground="{StaticResource MauChuMoBrush}" Margin="2,3,0,0" />
                         </StackPanel>
 
                         <!-- Xác nhận mật khẩu -->
@@ -103,42 +93,20 @@
                                 <TextBlock Text="Xác nhận mật khẩu" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" />
                                 <TextBlock Text=" *" Foreground="{StaticResource MauNguyHiemBrush}" FontWeight="Bold" />
                             </StackPanel>
-                            <PasswordBox x:Name="txtXacNhanMatKhau" Style="{StaticResource OMatKhau}" PasswordChar="●" />
-                            <TextBlock Text="Nhập lại chính xác mật khẩu" FontSize="11" Foreground="{StaticResource MauChuMoBrush}" Margin="2,4,0,0" />
+                            <PasswordBox x:Name="txtXacNhanMatKhau" Style="{StaticResource OMatKhau}" Height="38" PasswordChar="●" />
+                            <TextBlock Text="Nhập lại chính xác mật khẩu" FontSize="11" Foreground="{StaticResource MauChuMoBrush}" Margin="2,3,0,0" />
                         </StackPanel>
                     </Grid>
 
-                    <!-- HÀNG 3: EMAIL & SỐ ĐIỆN THOẠI -->
-                    <Grid Margin="0,0,0,12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="16" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                    <!-- EMAIL & ĐỊA CHỈ -->
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock Text="Email liên hệ (tùy chọn)" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" Margin="0,0,0,6" />
+                        <TextBox x:Name="txtEmail" Style="{StaticResource OVanBan}" Height="38" />
+                    </StackPanel>
 
-                        <!-- Email -->
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="Địa chỉ Email" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" Margin="0,0,0,6" />
-                            <TextBox x:Name="txtEmail" Style="{StaticResource OVanBan}" />
-                            <TextBlock Text="Ví dụ: thuha@tttstore.vn" FontSize="11" Foreground="{StaticResource MauChuMoBrush}" Margin="2,4,0,0" />
-                        </StackPanel>
-
-                        <!-- Số điện thoại -->
-                        <StackPanel Grid.Column="2">
-                            <TextBlock Text="Số điện thoại" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" Margin="0,0,0,6" />
-                            <TextBox x:Name="txtSoDienThoai" Style="{StaticResource OVanBan}" />
-                            <TextBlock Text="Ví dụ: 0912345678 (10 số)" FontSize="11" Foreground="{StaticResource MauChuMoBrush}" Margin="2,4,0,0" />
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- HÀNG 4: VAI TRÒ HỆ THỐNG -->
-                    <StackPanel Margin="0,0,0,16">
-                        <TextBlock Text="Vai trò phân quyền" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" Margin="0,0,0,6" />
-                        <ComboBox x:Name="cboVaiTro" Style="{StaticResource OHopChon}" SelectedIndex="0">
-                            <ComboBoxItem Content="Nhân viên" />
-                            <ComboBoxItem Content="Quản trị viên" />
-                        </ComboBox>
-                        <TextBlock Text="Nhân viên: Lập hóa đơn và kiểm tra kho hàng. Quản trị viên: Toàn quyền quản lý." FontSize="11" Foreground="{StaticResource MauChuMoBrush}" Margin="2,4,0,0" />
+                    <StackPanel Margin="0,0,0,8">
+                        <TextBlock Text="Địa chỉ giao hàng mặc định (tùy chọn)" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" Margin="0,0,0,6" />
+                        <TextBox x:Name="txtDiaChi" Style="{StaticResource OVanBan}" Height="54" TextWrapping="Wrap" />
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
@@ -147,12 +115,12 @@
             <Grid Grid.Row="3" Margin="0,16,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="16" />
-                    <ColumnDefinition Width="140" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="130" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Style="{StaticResource NutChinh}" Content="TẠO TÀI KHOẢN NGAY" Click="NutXacNhanDangKy_Click" />
-                <Button Grid.Column="2" Style="{StaticResource NutVien}" Content="Quay lại" Click="NutHuy_Click" />
+                <Button Grid.Column="0" Style="{StaticResource NutChinh}" Height="42" FontSize="13.5" FontWeight="Bold" Content="🛍️ TẠO TÀI KHOẢN NGƯỜI DÙNG" Click="NutXacNhanDangKy_Click" />
+                <Button Grid.Column="2" Style="{StaticResource NutVien}" Height="42" Content="Quay lại" Click="NutHuy_Click" />
             </Grid>
         </Grid>
     </Border>

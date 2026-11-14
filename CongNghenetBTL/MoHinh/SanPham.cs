@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace CongNghenetBTL.MoHinh
@@ -28,15 +28,18 @@ namespace CongNghenetBTL.MoHinh
                 {
                     if (!string.IsNullOrWhiteSpace(HinhAnh))
                     {
-                        if (File.Exists(HinhAnh))
-                            return HinhAnh;
+                        if (Path.IsPathRooted(HinhAnh) && File.Exists(HinhAnh))
+                            return Path.GetFullPath(HinhAnh);
 
-                        string duongDanBase = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, HinhAnh);
+                        string duongDanBase = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, HinhAnh.Replace('/', Path.DirectorySeparatorChar)));
                         if (File.Exists(duongDanBase))
                             return duongDanBase;
+
+                        if (File.Exists(HinhAnh))
+                            return Path.GetFullPath(HinhAnh);
                     }
 
-                    string anhMacDinh = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HinhAnh", "mac_dinh.jpg");
+                    string anhMacDinh = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HinhAnh", "mac_dinh.jpg"));
                     if (File.Exists(anhMacDinh))
                         return anhMacDinh;
                 }

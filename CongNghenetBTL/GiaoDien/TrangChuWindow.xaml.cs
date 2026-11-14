@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -418,6 +418,140 @@ namespace CongNghenetBTL.GiaoDien
             }
         }
 
+        private bool _dangCapNhatSdt = false;
+
+        private void CboKhachHangBanHang_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded || cboKhachHangBanHang == null) return;
+
+            var kh = cboKhachHangBanHang.SelectedItem as KhachHang;
+            if (kh == null || kh.MaKH == 0)
+            {
+                if (txtHangKhachBanHang != null) txtHangKhachBanHang.Text = "Khách vãng lai";
+                if (lblGiamGiaBanHang != null) lblGiamGiaBanHang.Text = "Giảm giá (đ):";
+                if (!_dangCapNhatSdt && txtSdtKhachHangBanHang != null)
+                {
+                    _dangCapNhatSdt = true;
+                    txtSdtKhachHangBanHang.Text = string.Empty;
+                    _dangCapNhatSdt = false;
+                }
+                if (txtGiamGiaBanHang != null) txtGiamGiaBanHang.Text = "0";
+            }
+            else
+            {
+                if (txtHangKhachBanHang != null) txtHangKhachBanHang.Text = kh.HienThiHang;
+                if (!_dangCapNhatSdt && txtSdtKhachHangBanHang != null)
+                {
+                    _dangCapNhatSdt = true;
+                    txtSdtKhachHangBanHang.Text = kh.SoDienThoai;
+                    _dangCapNhatSdt = false;
+                }
+
+                CapNhatGiamGiaTheoKhachHang(kh);
+            }
+
+            CapNhatTongTienBanHang();
+        }
+
+        private void CapNhatGiamGiaTheoKhachHang(KhachHang kh)
+        {
+            if (kh == null || txtGiamGiaBanHang == null) return;
+
+            decimal tongTien = _gioHang.Sum(x => x.ThanhTien);
+            decimal tiLe = kh.TyLeGiamGia;
+
+            if (lblGiamGiaBanHang != null)
+            {
+                if (tiLe > 0)
+                {
+                    lblGiamGiaBanHang.Text = $"Giảm ({kh.LoaiKhach} -{(int)(tiLe * 100)}%):";
+                }
+                else
+                {
+                    lblGiamGiaBanHang.Text = "Giảm giá (đ):";
+                }
+            }
+
+            decimal tienGiam = Math.Round(tongTien * tiLe);
+            txtGiamGiaBanHang.Text = tienGiam.ToString("0");
+        }
+
+        private void TxtSdtKhachHangBanHang_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!IsLoaded || _dangCapNhatSdt || cboKhachHangBanHang == null || txtSdtKhachHangBanHang == null) return;
+
+            string sdt = txtSdtKhachHangBanHang.Text.Trim();
+            if (string.IsNullOrEmpty(sdt))
+            {
+                cboKhachHangBanHang.SelectedIndex = 0;
+                return;
+            }
+
+            var dsKH = cboKhachHangBanHang.ItemsSource as List<KhachHang>;
+            if (dsKH != null)
+            {
+                var match = dsKH.FirstOrDefault(x => x.MaKH > 0 && !string.IsNullOrEmpty(x.SoDienThoai) && x.SoDienThoai.Contains(sdt));
+                if (match != null && cboKhachHangBanHang.SelectedItem != match)
+                {
+                    _dangCapNhatSdt = true;
+                    cboKhachHangBanHang.SelectedItem = match;
+                    _dangCapNhatSdt = false;
+                    if (txtHangKhachBanHang != null) txtHangKhachBanHang.Text = match.HienThiHang;
+                    CapNhatGiamGiaTheoKhachHang(match);
+                    CapNhatTongTienBanHang();
+                }
+            }
+        }
+
+        private void TxtSdtKhachHangBanHang_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                TimKhachHangTheoSoDienThoai();
+            }
+        }
+
+        private void BtnTimSdtBanHang_Click(object sender, RoutedEventArgs e)
+        {
+            TimKhachHangTheoSoDienThoai();
+        }
+
+        private void TimKhachHangTheoSoDienThoai()
+        {
+            string sdt = txtSdtKhachHangBanHang.Text.Trim();
+            if (string.IsNullOrEmpty(sdt))
+            {
+                MessageBox.Show("Vui lòng nhập số điện thoại khách hàng cần tìm!", "Thông Báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dsKH = cboKhachHangBanHang.ItemsSource as List<KhachHang>;
+            if (dsKH != null)
+            {
+                var match = dsKH.FirstOrDefault(x => x.MaKH > 0 && !string.IsNullOrEmpty(x.SoDienThoai) && x.SoDienThoai.Equals(sdt, StringComparison.OrdinalIgnoreCase));
+                if (match == null)
+                {
+                    match = dsKH.FirstOrDefault(x => x.MaKH > 0 && !string.IsNullOrEmpty(x.SoDienThoai) && x.SoDienThoai.Contains(sdt));
+                }
+
+                if (match != null)
+                {
+                    _dangCapNhatSdt = true;
+                    cboKhachHangBanHang.SelectedItem = match;
+                    txtSdtKhachHangBanHang.Text = match.SoDienThoai;
+                    _dangCapNhatSdt = false;
+                    if (txtHangKhachBanHang != null) txtHangKhachBanHang.Text = match.HienThiHang;
+                    CapNhatGiamGiaTheoKhachHang(match);
+                    CapNhatTongTienBanHang();
+                    MessageBox.Show($"Đã tìm thấy khách hàng:\n• Họ tên: {match.HoTen}\n• Hạng: {match.HienThiHang}\n• Điểm tích lũy: {match.DiemTichLuy} điểm", "Tìm Khách Hàng", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show($"Không tìm thấy khách hàng nào có SĐT '{sdt}'!\nBạn có thể sang mục 'Khách Hàng' để tạo mới khách hàng này.", "Không Tìm Thấy", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+        }
+
         private void TxtGiamGiaBanHang_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!IsLoaded) return;
@@ -435,6 +569,18 @@ namespace CongNghenetBTL.GiaoDien
             if (!IsLoaded || txtTongTienBanHang == null || txtGiamGiaHienThi == null || txtKhachPhaiTraBanHang == null || txtSoLuongMatHang == null) return;
 
             decimal tongTien = _gioHang.Sum(x => x.ThanhTien);
+
+            var khHienTai = cboKhachHangBanHang?.SelectedItem as KhachHang;
+            if (khHienTai != null && khHienTai.MaKH > 0 && khHienTai.TyLeGiamGia > 0 && !_dangCapNhatSdt)
+            {
+                decimal tienGiamTheoHang = Math.Round(tongTien * khHienTai.TyLeGiamGia);
+                string strGiam = tienGiamTheoHang.ToString("0");
+                if (txtGiamGiaBanHang != null && txtGiamGiaBanHang.Text != strGiam)
+                {
+                    txtGiamGiaBanHang.Text = strGiam;
+                }
+            }
+
             decimal giamGia = 0;
             if (txtGiamGiaBanHang != null)
             {
@@ -519,6 +665,8 @@ namespace CongNghenetBTL.GiaoDien
                 txtGiamGiaBanHang.Text = "0";
                 txtTienKhachDua.Text = "0";
                 txtGhiChuBanHang.Text = string.Empty;
+                if (txtSdtKhachHangBanHang != null) txtSdtKhachHangBanHang.Text = string.Empty;
+                if (cboKhachHangBanHang != null) cboKhachHangBanHang.SelectedIndex = 0;
                 CapNhatTongTienBanHang();
 
                 LocSanPhamBanHang();

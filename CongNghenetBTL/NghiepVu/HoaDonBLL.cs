@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using CongNghenetBTL.MoHinh;
 using CongNghenetBTL.TruyCapDuLieu;
@@ -57,10 +57,10 @@ namespace CongNghenetBTL.NghiepVu
             return _hoaDonDAL.LayDanhSach(tuNgay, denNgay, tuKhoa);
         }
 
-        public List<HoaDon> LayLichSuTheoKhachHang(int maKH)
+        public List<HoaDon> LayLichSuTheoKhachHang(int maKH, DateTime? tuNgay = null, DateTime? denNgay = null)
         {
             if (maKH <= 0) return new List<HoaDon>();
-            return _hoaDonDAL.LayDanhSachTheoKhachHang(maKH);
+            return _hoaDonDAL.LayDanhSachTheoKhachHang(maKH, tuNgay, denNgay);
         }
 
         public List<ChiTietHoaDon> LayChiTietTheoHoaDon(int maHD)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -10,23 +10,23 @@ namespace CongNghenetBTL.GiaoDien
 {
     public partial class DangNhapWindow : Window
     {
-        private readonly NguoiDungBLL _nghiepVu = new NguoiDungBLL();
+        private readonly NguoiDungBLL _nguoiDungBLL = new NguoiDungBLL();
+        private readonly KhachHangBLL _khachHangBLL = new KhachHangBLL();
         private bool _dangHienMatKhau = false;
 
         public DangNhapWindow()
         {
             InitializeComponent();
-            txtTenDangNhap.Text = "admin";
-            txtMatKhau.Password = "123456";
-            txtMatKhauHienThi.Text = "123456";
             txtTenDangNhap.Focus();
         }
 
         public void DienTenDangNhapMoi(string tenDangNhap)
         {
             txtTenDangNhap.Text = tenDangNhap;
+            txtMatKhau.Password = string.Empty;
+            txtMatKhauHienThi.Text = string.Empty;
             txtMatKhau.Focus();
-            HienThongBao("Đăng ký thành công! Vui lòng nhập mật khẩu để đăng nhập.", false);
+            HienThongBao("Đăng ký tài khoản người dùng thành công! Vui lòng nhập mật khẩu để đăng nhập.", false);
         }
 
         private void CuaSo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -101,7 +101,7 @@ namespace CongNghenetBTL.GiaoDien
 
             if (string.IsNullOrEmpty(tenDangNhap))
             {
-                HienThongBao("Vui lòng nhập tên đăng nhập!", true);
+                HienThongBao("Vui lòng nhập tên đăng nhập hoặc số điện thoại!", true);
                 txtTenDangNhap.Focus();
                 return;
             }
@@ -113,21 +113,32 @@ namespace CongNghenetBTL.GiaoDien
                 return;
             }
 
-            NguoiDung nguoiDung = _nghiepVu.DangNhap(tenDangNhap, matKhau, out string thongBao);
-
-            if (nguoiDung != null)
+            // 1. Kiểm tra tài khoản Quản trị viên (Admin)
+            NguoiDung admin = _nguoiDungBLL.DangNhap(tenDangNhap, matKhau, out string tbAdmin);
+            if (admin != null)
             {
-                PhienDangNhap.DangNhap(nguoiDung);
+                PhienDangNhap.DangNhap(admin);
 
                 var trangChu = new TrangChuWindow();
                 trangChu.Show();
-
                 this.Close();
+                return;
             }
-            else
+
+            // 2. Kiểm tra tài khoản Người dùng / Khách hàng
+            KhachHang kh = _khachHangBLL.DangNhap(tenDangNhap, matKhau, out string tbKhach);
+            if (kh != null)
             {
-                HienThongBao(thongBao, true);
+                PhienDangNhap.DangNhapKhachHang(kh);
+
+                var cuaSoKhach = new KhachHangWindow();
+                cuaSoKhach.Show();
+                this.Close();
+                return;
             }
+
+            // 3. Nếu cả hai đều không chính xác
+            HienThongBao("Tên đăng nhập / Số điện thoại hoặc mật khẩu không chính xác!", true);
         }
 
         private void HienThongBao(string noiDung, bool laLoi)
@@ -151,36 +162,23 @@ namespace CongNghenetBTL.GiaoDien
             }
         }
 
-        private void NutMauAdmin_Click(object sender, RoutedEventArgs e)
-        {
-            txtTenDangNhap.Text = "admin";
-            txtMatKhau.Password = "123456";
-            txtMatKhauHienThi.Text = "123456";
-            pnlThongBao.Visibility = Visibility.Collapsed;
-        }
-
-        private void NutVaoThangTrangChu_Click(object sender, RoutedEventArgs e)
-        {
-            txtTenDangNhap.Text = "admin";
-            txtMatKhau.Password = "123456";
-            txtMatKhauHienThi.Text = "123456";
-            ThucHienDangNhap();
-        }
-
         private void HyperlinkQuenMatKhau_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(
-                "Để đặt lại mật khẩu, vui lòng liên hệ Quản lý cửa hàng hoặc sử dụng tài khoản Admin để cấp lại mật khẩu mới!",
+                "Để đặt lại mật khẩu:\n- Quản trị viên: Vui lòng liên hệ chủ cửa hàng.\n- Khách hàng: Mật khẩu ban đầu mặc định là 123456 hoặc liên hệ hotline cửa hàng để hỗ trợ!",
                 "Thông Báo Quên Mật Khẩu",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
 
-        private void BtnVaoMuaSamKhach_Click(object sender, RoutedEventArgs e)
+        private void BtnDangKyMoi_Click(object sender, RoutedEventArgs e)
         {
-            var cuaSoKhach = new KhachHangWindow();
-            cuaSoKhach.Show();
-            this.Close();
+            var dangKy = new DangKyWindow();
+            dangKy.Owner = this;
+            if (dangKy.ShowDialog() == true && !string.IsNullOrEmpty(dangKy.SoDienThoaiMoi))
+            {
+                DienTenDangNhapMoi(dangKy.SoDienThoaiMoi);
+            }
         }
     }
 }

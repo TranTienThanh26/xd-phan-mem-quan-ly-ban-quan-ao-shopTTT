@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.IO;
 
 namespace CongNghenetBTL.MoHinh
 {
@@ -14,5 +15,36 @@ namespace CongNghenetBTL.MoHinh
         public decimal DonGia { get; set; }
         public decimal ThanhTien { get; set; }
         public string HinhAnh { get; set; }
+
+        public string DuongDanAnhDayDu
+        {
+            get
+            {
+                try
+                {
+                    if (!string.IsNullOrWhiteSpace(HinhAnh))
+                    {
+                        if (Path.IsPathRooted(HinhAnh) && File.Exists(HinhAnh))
+                            return Path.GetFullPath(HinhAnh);
+
+                        string duongDanBase = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, HinhAnh.Replace('/', Path.DirectorySeparatorChar)));
+                        if (File.Exists(duongDanBase))
+                            return duongDanBase;
+
+                        if (File.Exists(HinhAnh))
+                            return Path.GetFullPath(HinhAnh);
+                    }
+
+                    string anhMacDinh = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HinhAnh", "mac_dinh.jpg"));
+                    if (File.Exists(anhMacDinh))
+                        return anhMacDinh;
+                }
+                catch { }
+
+                return null;
+            }
+        }
+
+        public string ThongTinChiTiet => string.IsNullOrEmpty(MauSac) ? KichCo : $"{KichCo} | {MauSac}";
     }
 }

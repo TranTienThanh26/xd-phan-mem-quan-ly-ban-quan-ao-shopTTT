@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using MySqlConnector;
@@ -140,7 +140,7 @@ namespace CongNghenetBTL.TruyCapDuLieu
             return danhSach;
         }
 
-        public List<HoaDon> LayDanhSachTheoKhachHang(int maKH)
+        public List<HoaDon> LayDanhSachTheoKhachHang(int maKH, DateTime? tuNgay = null, DateTime? denNgay = null)
         {
             var danhSach = new List<HoaDon>();
             string sql = @"
@@ -150,15 +150,28 @@ namespace CongNghenetBTL.TruyCapDuLieu
                 FROM HoaDon hd
                 LEFT JOIN KhachHang kh ON hd.MaKH = kh.MaKH
                 LEFT JOIN NguoiDung nd ON hd.MaND = nd.MaND
-                WHERE hd.MaKH = @MaKH
-                ORDER BY hd.MaHD DESC";
+                WHERE hd.MaKH = @MaKH";
 
-            MySqlParameter[] thamSo = new MySqlParameter[]
+            var thamSoList = new List<MySqlParameter>
             {
                 new MySqlParameter("@MaKH", MySqlDbType.Int32) { Value = maKH }
             };
 
-            DataTable dt = KetNoiCSDL.ThucThiTruyVan(sql, thamSo);
+            if (tuNgay.HasValue)
+            {
+                sql += " AND hd.NgayLap >= @TuNgay";
+                thamSoList.Add(new MySqlParameter("@TuNgay", MySqlDbType.DateTime) { Value = tuNgay.Value.Date });
+            }
+
+            if (denNgay.HasValue)
+            {
+                sql += " AND hd.NgayLap < @DenNgay";
+                thamSoList.Add(new MySqlParameter("@DenNgay", MySqlDbType.DateTime) { Value = denNgay.Value.Date.AddDays(1) });
+            }
+
+            sql += " ORDER BY hd.MaHD DESC";
+
+            DataTable dt = KetNoiCSDL.ThucThiTruyVan(sql, thamSoList.ToArray());
             foreach (DataRow row in dt.Rows)
             {
                 danhSach.Add(new HoaDon

@@ -10,7 +10,8 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent"
+        ShowInTaskbar="True">
 
     <!-- KHUNG CHÍNH CỬA SỔ -->
     <Border CornerRadius="12" Background="{StaticResource MauNenChinhBrush}" Effect="{StaticResource BongNoiBat}" Margin="10">
@@ -496,9 +497,22 @@
                                 <!-- THÔNG TIN KHÁCH HÀNG & TÍNH TIỀN -->
                                 <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
                                     <StackPanel>
-                                        <!-- KHÁCH HÀNG -->
-                                        <TextBlock Text="Khách hàng mua sắm:" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,0,0,4" />
-                                        <ComboBox x:Name="cboKhachHangBanHang" Style="{StaticResource OHopChon}" Height="36" DisplayMemberPath="HoTen" SelectedValuePath="MaKH" />
+                                        <!-- KHÁCH HÀNG & HẠNG VIP -->
+                                        <Grid Margin="0,0,0,4">
+                                            <TextBlock Text="Khách hàng mua sắm:" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MauChuPhuBrush}" />
+                                            <TextBlock x:Name="txtHangKhachBanHang" Text="Khách vãng lai" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource MauThoiTrangBrush}" HorizontalAlignment="Right" />
+                                        </Grid>
+                                        <ComboBox x:Name="cboKhachHangBanHang" Style="{StaticResource OHopChon}" Height="36" DisplayMemberPath="HienThiCombo" SelectedValuePath="MaKH" SelectionChanged="CboKhachHangBanHang_SelectionChanged" />
+
+                                        <!-- NHẬP / TÌM SỐ ĐIỆN THOẠI KHÁCH HÀNG -->
+                                        <Grid Margin="0,6,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="txtSdtKhachHangBanHang" Style="{StaticResource OVanBan}" Height="34" Tag="Nhập SĐT khách hàng..." TextChanged="TxtSdtKhachHangBanHang_TextChanged" KeyDown="TxtSdtKhachHangBanHang_KeyDown" />
+                                            <Button Grid.Column="1" x:Name="btnTimSdtBanHang" Style="{StaticResource NutChinh}" Margin="6,0,0,0" Padding="12,0" Height="34" Content="🔍 Tìm SĐT" Click="BtnTimSdtBanHang_Click" />
+                                        </Grid>
 
                                         <!-- PHƯƠNG THỨC & GIẢM GIÁ -->
                                         <Grid Margin="0,8,0,0">
@@ -516,7 +530,7 @@
                                                 </ComboBox>
                                             </StackPanel>
                                             <StackPanel Grid.Column="2">
-                                                <TextBlock Text="Giảm giá (đ):" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,0,0,4" />
+                                                <TextBlock x:Name="lblGiamGiaBanHang" Text="Giảm giá (đ):" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,0,0,4" />
                                                 <TextBox x:Name="txtGiamGiaBanHang" Style="{StaticResource OVanBan}" Height="36" Text="0" TextChanged="TxtGiamGiaBanHang_TextChanged" />
                                             </StackPanel>
                                         </Grid>

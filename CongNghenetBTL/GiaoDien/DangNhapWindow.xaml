@@ -5,11 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Đăng Nhập - TTT Store Quản Lý Bán Quần Áo" 
-        Height="590" Width="920"
+        Height="480" Width="920"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
+        ShowInTaskbar="True"
+        Topmost="True"
         MouseLeftButtonDown="CuaSo_MouseLeftButtonDown">
 
     <!-- KHUNG CHÍNH BO GÓC CÓ ĐỔ BÓNG -->
@@ -47,7 +49,7 @@
                     </StackPanel>
 
                     <!-- CÁC TÍNH NĂNG NỔI BẬT CỦA PHẦN MỀM -->
-                    <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,20,0,0">
+                    <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,16,0,0">
                         <Border Background="#20FFFFFF" CornerRadius="10" Padding="14,10" Margin="0,0,0,12">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="✨" FontSize="16" Foreground="#FDE047" Margin="0,0,10,0" VerticalAlignment="Center"/>
@@ -89,7 +91,6 @@
                     <RowDefinition Height="Auto" /> <!-- Nút thu nhỏ/đóng -->
                     <RowDefinition Height="Auto" /> <!-- Tiêu đề form -->
                     <RowDefinition Height="*" />    <!-- Form nhập -->
-                    <RowDefinition Height="Auto" /> <!-- Footer chọn mẫu & đăng ký -->
                 </Grid.RowDefinitions>
 
                 <!-- NÚT ĐIỀU KHIỂN CỬA SỔ -->
@@ -100,8 +101,8 @@
 
                 <!-- TIÊU ĐỀ FORM -->
                 <StackPanel Grid.Row="1" Margin="0,0,0,20">
-                    <TextBlock Text="Đăng Nhập Quản Trị Viên" FontSize="25" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" />
-                    <TextBlock Text="Dành cho Quản trị viên (Admin) quản lý cửa hàng và hệ thống" FontSize="13" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,5,0,0" />
+                    <TextBlock Text="Đăng Nhập Hệ Thống" FontSize="26" FontWeight="Bold" Foreground="{StaticResource MauChuChinhBrush}" />
+                    <TextBlock Text="Đăng nhập để vào cửa hàng mua sắm hoặc quản lý hệ thống" FontSize="13" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,5,0,0" />
                 </StackPanel>
 
                 <!-- FORM NHẬP THÔNG TIN -->
@@ -115,7 +116,7 @@
                     </Border>
 
                     <!-- TÊN ĐĂNG NHẬP -->
-                    <TextBlock Text="Tên đăng nhập Admin" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" Margin="0,0,0,6" />
+                    <TextBlock Text="Tên đăng nhập / Số điện thoại" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource MauChuChinhBrush}" Margin="0,0,0,6" />
                     <Grid Margin="0,0,0,14">
                         <TextBox x:Name="txtTenDangNhap" Style="{StaticResource OVanBan}" KeyDown="TxtTenDangNhap_KeyDown" Padding="36,0,10,0" />
                         <TextBlock Text="👤" FontSize="15" Foreground="{StaticResource MauChuMoBrush}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="12,0,0,0" IsHitTestVisible="False" />
@@ -143,36 +144,13 @@
                         </TextBlock>
                     </Grid>
 
-                    <!-- NÚT ĐĂNG NHẬP ADMIN -->
-                    <Button x:Name="btnDangNhap" Style="{StaticResource NutChinh}" Content="👑 ĐĂNG NHẬP QUẢN TRỊ VIÊN (ADMIN)" Click="BtnDangNhap_Click" />
+                    <!-- NÚT ĐĂNG NHẬP -->
+                    <Button x:Name="btnDangNhap" Style="{StaticResource NutChinh}" Height="44" FontSize="14" FontWeight="Bold" Content="🔑 ĐĂNG NHẬP" Click="BtnDangNhap_Click" />
 
-                    <!-- NÚT MỞ GIAO DIỆN MUA SẮM KHÁCH HÀNG -->
-                    <Button x:Name="btnVaoMuaSamKhach" Content="🛍️ VÀO CỬA HÀNG MUA SẮM (KHÁCH HÀNG)" 
-                            Style="{StaticResource NutPhu}" Height="42" Margin="0,10,0,0" 
-                            Foreground="{StaticResource MauThoiTrangBrush}" BorderBrush="{StaticResource MauThoiTrangBrush}" 
-                            FontWeight="Bold" FontSize="13" Cursor="Hand" Click="BtnVaoMuaSamKhach_Click" />
-                </StackPanel>
-
-                <!-- FOOTER: CHỌN MẪU & GHI CHÚ TÁC NHÂN -->
-                <StackPanel Grid.Row="3" Margin="0,10,0,0">
-                    <!-- TÀI KHOẢN MẪU DỄ CHẤM ĐIỂM -->
-                    <Border Background="#F1F5F9" CornerRadius="8" Padding="10,8" Margin="0,0,0,10">
-                        <StackPanel>
-                            <TextBlock Text="💡 Bấm nhanh để kiểm tra phần mềm:" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,0,0,4" />
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="👑 Điền mẫu Admin (admin / 123456)" Margin="0,0,8,0" Padding="10,5" FontSize="11.5" FontWeight="SemiBold"
-                                        Background="White" BorderBrush="#CBD5E1" BorderThickness="1" Cursor="Hand" Click="NutMauAdmin_Click"/>
-                                <Button Content="🚀 Vào Thẳng Quản Trị" Padding="10,5" FontSize="11.5" FontWeight="SemiBold"
-                                        Background="#EEF2FF" Foreground="#4F46E5" BorderBrush="#C7D2FE" BorderThickness="1" Cursor="Hand" Click="NutVaoThangTrangChu_Click"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- GHI CHÚ 2 TÁC NHÂN -->
-                    <Border Background="#F8FAFC" CornerRadius="6" Padding="8,6">
-                        <TextBlock Text="✨ Hệ thống gồm 2 tác nhân chính: Quản trị viên (Admin) và Khách hàng mua sắm." 
-                                   FontSize="11.5" Foreground="{StaticResource MauChuPhuBrush}" HorizontalAlignment="Center" TextAlignment="Center" />
-                    </Border>
+                    <!-- NÚT ĐĂNG KÝ TÀI KHOẢN -->
+                    <Button x:Name="btnDangKyMoi" Content="📝 ĐĂNG KÝ TÀI KHOẢN" 
+                            Style="{StaticResource NutVien}" Height="42" Margin="0,12,0,0" 
+                            FontSize="13.5" FontWeight="SemiBold" Cursor="Hand" Click="BtnDangKyMoi_Click" />
                 </StackPanel>
             </Grid>
         </Grid>

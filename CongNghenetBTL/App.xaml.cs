@@ -63,6 +63,25 @@ namespace CongNghenetBTL
                     cuaSoKhach.Activate();
                     GhiLog("KhachHangWindow đã Show thành công!");
                 }
+                else if (e.Args.Length > 0 && (e.Args[0] == "--record-video" || e.Args[0] == "--demo"))
+                {
+                    GhiLog("Khởi động chế độ --record-video");
+                    try {
+                    var cuaSoKhach = new KhachHangWindow();
+                    this.MainWindow = cuaSoKhach;
+                    cuaSoKhach.Show();
+                    cuaSoKhach.Activate();
+                    GhiLog("KhachHangWindow đã Show thành công để ghi video!");
+
+                    string videoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\Video_Test_KhachHang_TTTStore.mp4");
+                    if (e.Args.Length > 1) videoPath = e.Args[1];
+                    videoPath = Path.GetFullPath(videoPath);
+
+                    TienIch.TrinhGhiVideoTest.ChayKiemThuVaGhiVideoAsync(cuaSoKhach, videoPath);
+                    } catch (Exception exRecord) {
+                        GhiLog("LỖI KHỞI ĐỘNG RECORD: " + exRecord.ToString());
+                    }
+                }
                 else
                 {
                     GhiLog("Khởi động màn hình Đăng Nhập");
