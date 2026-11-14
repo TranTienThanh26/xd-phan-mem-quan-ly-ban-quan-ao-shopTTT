@@ -108,9 +108,10 @@
                             </StackPanel>
                         </Button>
 
-                        <!-- NÚT THU NHỎ & ĐÓNG CỬA SỔ -->
+                        <!-- NÚT THU NHỎ, PHÓNG TO & ĐÓNG CỬA SỔ -->
                         <StackPanel Orientation="Horizontal">
                             <Button Style="{StaticResource NutBieuTuong}" Content="—" Width="32" Height="32" Margin="0,0,4,0" Click="NutThuNho_Click" ToolTip="Thu nhỏ" />
+                            <Button x:Name="btnMaximize" Style="{StaticResource NutBieuTuong}" Content="🗖" Width="32" Height="32" Margin="0,0,4,0" Click="NutPhongTo_Click" ToolTip="Phóng to / Khôi phục" />
                             <Button Style="{StaticResource NutBieuTuong}" Content="✕" Width="32" Height="32" Click="NutDong_Click" ToolTip="Đóng ứng dụng" />
                         </StackPanel>
                     </StackPanel>
@@ -699,7 +700,16 @@
                                     <TextBlock Text="Mô tả sản phẩm:" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource MauChuPhuBrush}" Margin="0,0,0,2" />
                                     <TextBlock x:Name="txtModalMoTa" Text="Form dáng thanh lịch, thoáng mát cả ngày." FontSize="12" Foreground="{StaticResource MauChuChinhBrush}" TextWrapping="Wrap" Margin="0,0,0,14" />
 
-                                    <Button x:Name="btnModalThemVaoGio" Content="🛒 Thêm Vào Giỏ Hàng" Style="{StaticResource NutChinh}" Height="42" FontSize="13" FontWeight="Bold" Click="BtnModalThemVaoGio_Click" />
+                                    <!-- CÁC NÚT THAO TÁC: THÊM GIỎ & MUA NGAY -->
+                                    <Grid Margin="0,4,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="0" x:Name="btnModalThemVaoGio" Content="🛒 Thêm Vào Giỏ" Style="{StaticResource NutVien}" Height="44" FontSize="13" FontWeight="Bold" Click="BtnModalThemVaoGio_Click" />
+                                        <Button Grid.Column="2" x:Name="btnModalMuaNgay" Content="⚡ Mua Ngay" Style="{StaticResource NutChinh}" Background="{StaticResource MauThoiTrangBrush}" BorderBrush="{StaticResource MauThoiTrangBrush}" Height="44" FontSize="13" FontWeight="Bold" Click="BtnModalMuaNgay_Click" />
+                                    </Grid>
                                 </StackPanel>
                             </ScrollViewer>
                         </Grid>

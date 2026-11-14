@@ -63,7 +63,11 @@ namespace CongNghenetBTL.GiaoDien
 
         private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ButtonState == MouseButtonState.Pressed)
+            if (e.ClickCount == 2)
+            {
+                ChuyenTrangThaiPhongTo();
+            }
+            else if (e.ButtonState == MouseButtonState.Pressed)
             {
                 DragMove();
             }
@@ -72,6 +76,25 @@ namespace CongNghenetBTL.GiaoDien
         private void NutThuNho_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
+        }
+
+        private void NutPhongTo_Click(object sender, RoutedEventArgs e)
+        {
+            ChuyenTrangThaiPhongTo();
+        }
+
+        private void ChuyenTrangThaiPhongTo()
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                WindowState = WindowState.Normal;
+                if (btnMaximize != null) btnMaximize.Content = "🗖";
+            }
+            else
+            {
+                WindowState = WindowState.Maximized;
+                if (btnMaximize != null) btnMaximize.Content = "🗗";
+            }
         }
 
         private void NutDong_Click(object sender, RoutedEventArgs e)
@@ -428,25 +451,29 @@ namespace CongNghenetBTL.GiaoDien
             pnlNut.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             pnlNut.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1.3, GridUnitType.Star) });
 
-            var btnChiTiet = new Button
+            var btnThemGio = new Button
             {
-                Content = "👁️ Chi tiết",
+                Content = "🛒 Thêm Giỏ",
                 Style = (Style)FindResource("NutPhu"),
                 Height = 34,
                 FontSize = 11,
+                FontWeight = FontWeights.SemiBold,
                 Margin = new Thickness(0, 0, 4, 0),
                 Tag = sp
             };
-            btnChiTiet.Click += (s, ev) => HienModalChiTiet(sp);
-            Grid.SetColumn(btnChiTiet, 0);
-            pnlNut.Children.Add(btnChiTiet);
+            btnThemGio.Click += (s, ev) => HienModalChiTiet(sp);
+            Grid.SetColumn(btnThemGio, 0);
+            pnlNut.Children.Add(btnThemGio);
 
             var btnMua = new Button
             {
-                Content = "🛒 Thêm Giỏ",
+                Content = "⚡ Mua Ngay",
                 Style = (Style)FindResource("NutChinh"),
+                Background = (Brush)FindResource("MauThoiTrangBrush"),
+                BorderBrush = (Brush)FindResource("MauThoiTrangBrush"),
                 Height = 34,
                 FontSize = 11,
+                FontWeight = FontWeights.Bold,
                 Margin = new Thickness(4, 0, 0, 0),
                 Tag = sp
             };
@@ -637,8 +664,25 @@ namespace CongNghenetBTL.GiaoDien
             if (int.TryParse(txtModalSoLuongMua.Text, out int sl) && sl > 0)
             {
                 string sizeChon = !string.IsNullOrEmpty(_sizeDangChon) ? _sizeDangChon : _spDangXemChiTiet.KichCo;
-                ThemVaoGioHang(_spDangXemChiTiet, sl, sizeChon);
-                modalChiTietSP.Visibility = Visibility.Collapsed;
+                if (ThemVaoGioHang(_spDangXemChiTiet, sl, sizeChon, hienThongBao: true))
+                {
+                    modalChiTietSP.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        private void BtnModalMuaNgay_Click(object sender, RoutedEventArgs e)
+        {
+            if (_spDangXemChiTiet == null) return;
+            if (int.TryParse(txtModalSoLuongMua.Text, out int sl) && sl > 0)
+            {
+                string sizeChon = !string.IsNullOrEmpty(_sizeDangChon) ? _sizeDangChon : _spDangXemChiTiet.KichCo;
+                if (ThemVaoGioHang(_spDangXemChiTiet, sl, sizeChon, hienThongBao: false))
+                {
+                    modalChiTietSP.Visibility = Visibility.Collapsed;
+                    // Chuyển thẳng sang Tab Giỏ Hàng & Thanh Toán ngay lập tức
+                    tabNavGioHang.IsChecked = true;
+                }
             }
         }
 
@@ -646,9 +690,9 @@ namespace CongNghenetBTL.GiaoDien
 
         #region 3. TAB GIỎ HÀNG & THANH TOÁN (CART & CHECKOUT)
 
-        private void ThemVaoGioHang(SanPham sp, int soLuong, string kichCoChon = null)
+        private bool ThemVaoGioHang(SanPham sp, int soLuong, string kichCoChon = null, bool hienThongBao = true)
         {
-            if (sp == null) return;
+            if (sp == null) return false;
 
             if (string.IsNullOrWhiteSpace(kichCoChon))
             {
@@ -658,14 +702,14 @@ namespace CongNghenetBTL.GiaoDien
             if (sp.SoLuongTon <= 0)
             {
                 HienThongBao($"Mẫu '{sp.TenSP}' tạm thời đã hết hàng trong kho!", "Hết Hàng", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                return false;
             }
 
             int tongSoLuongSpTrongGio = _gioHang.Where(x => x.MaSP == sp.MaSP).Sum(x => x.SoLuong);
             if (tongSoLuongSpTrongGio + soLuong > sp.SoLuongTon)
             {
                 HienThongBao($"Bạn đã có {tongSoLuongSpTrongGio} sản phẩm này trong giỏ. Số lượng kho chỉ còn {sp.SoLuongTon} cái!", "Cảnh Báo Tồn Kho", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                return false;
             }
 
             var item = _gioHang.FirstOrDefault(x => x.MaSP == sp.MaSP && x.KichCo == kichCoChon);
@@ -693,7 +737,12 @@ namespace CongNghenetBTL.GiaoDien
             CapNhatBadgeGioHang();
             CapNhatTongTienGioHang();
 
-            HienThongBao($"Đã thêm {soLuong} x '{sp.TenSP}' (Size: {kichCoChon}) vào giỏ hàng thành công!", "Giỏ Hàng TTT Store", MessageBoxButton.OK, MessageBoxImage.Information);
+            if (hienThongBao)
+            {
+                HienThongBao($"Đã thêm {soLuong} x '{sp.TenSP}' (Size: {kichCoChon}) vào giỏ hàng thành công!", "Giỏ Hàng TTT Store", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+
+            return true;
         }
 
         private void CapNhatBadgeGioHang()
